@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Potestas.ExtensionMethods;
+using System;
 
 namespace Potestas.Observations
 {
@@ -19,8 +20,31 @@ namespace Potestas.Observations
     * Why immutable structure is used here?
     * TESTS: Cover this structure with unit tests
     */
-    public struct FlashObservation : IEnergyObservation
+    public struct FlashObservation : IEnergyObservation, IEquatable<FlashObservation>
     {
+        private const double Precision = 0.1;
+        private const double MinIntensityValue = 0;
+        private const double MaxIntensityValue = 2000000000;
+
+        public FlashObservation(Coordinates observationPoint, double intensity, int durationMs) 
+            : this(observationPoint, intensity, durationMs, DateTime.Now)
+        {
+
+        }
+
+        public FlashObservation(Coordinates observationPoint, double intensity, int durationMs, DateTime observationTime) : this()
+        {
+            if (intensity < MinIntensityValue || intensity > MaxIntensityValue)
+            {
+                throw new ArgumentOutOfRangeException(nameof(intensity), $"The intensity is not in [{MinIntensityValue.ToString()}; {MaxIntensityValue.ToString()}]");
+            }
+
+            Intensity = intensity;
+            ObservationPoint = observationPoint;
+            DurationMs = durationMs;
+            ObservationTime = observationTime;
+        }
+
         public Coordinates ObservationPoint { get; }
 
         public double Intensity { get; }
@@ -29,6 +53,39 @@ namespace Potestas.Observations
 
         public DateTime ObservationTime { get; }
 
-        public double EstimatedValue => throw new NotImplementedException();
+        public double EstimatedValue => Intensity * DurationMs;
+
+        public static bool operator ==(FlashObservation first, FlashObservation second) => first.Equals(second);
+
+        public static bool operator !=(FlashObservation first, FlashObservation second) => !(first == second);
+
+        public bool Equals(FlashObservation other)
+        {
+            return ObservationPoint == other.ObservationPoint && ObservationTime == other.ObservationTime &&
+                   EstimatedValue.CompareTo(other.EstimatedValue, Precision) == 0;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is FlashObservation other && Equals(other);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                var hashCode = ObservationPoint.GetHashCode();
+                hashCode = (hashCode * 397) ^ EstimatedValue.GetHashCode();
+                hashCode = (hashCode * 397) ^ ObservationTime.GetHashCode();
+                
+                return hashCode;
+            }
+        }
+
+        public override string ToString()
+        {
+            return $"FlashObservation: ObservationPoint = {ObservationPoint.ToString()}, Intensity = {Intensity.ToString()}, " +
+                   $"Duration(ms) = {DurationMs.ToString()}, ObservationTime = {ObservationTime.ToString()}, EstimatedValue = {EstimatedValue.ToString()}";
+        }
     }
 }
