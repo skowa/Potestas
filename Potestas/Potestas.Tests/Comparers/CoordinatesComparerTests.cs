@@ -1,12 +1,20 @@
 ﻿using System.Collections.Generic;
+using Moq;
 using Potestas.Comparers;
+using Potestas.Configuration;
 using Xunit;
 
 namespace Potestas.Tests.Comparers
 {
     public class CoordinatesComparerTests
     {
-        private readonly CoordinatesComparer _coordinatesComparer = new CoordinatesComparer();
+        private readonly Mock<IConfiguration> _configurationMock = new Mock<IConfiguration>();
+        private readonly CoordinatesComparer _coordinatesComparer;
+
+        public CoordinatesComparerTests()
+        {
+            _coordinatesComparer = new CoordinatesComparer(_configurationMock.Object);
+        }
 
         public static List<object[]> CompareData =>
             new List<object[]>

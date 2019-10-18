@@ -23,8 +23,6 @@ namespace Potestas.Observations
     public struct FlashObservation : IEnergyObservation, IEquatable<FlashObservation>
     {
         private const double Precision = 0.1;
-        private const double MinIntensityValue = 0;
-        private const double MaxIntensityValue = 2000000000;
 
         public FlashObservation(Coordinates observationPoint, double intensity, int durationMs) 
             : this(observationPoint, intensity, durationMs, DateTime.Now)
@@ -54,6 +52,10 @@ namespace Potestas.Observations
         public DateTime ObservationTime { get; }
 
         public double EstimatedValue => Intensity * DurationMs;
+       
+        public static double MinIntensityValue { get; } = 0;
+        
+        public static double MaxIntensityValue { get; } = 2000000000;
 
         public static bool operator ==(FlashObservation first, FlashObservation second) => first.Equals(second);
 
@@ -72,14 +74,11 @@ namespace Potestas.Observations
 
         public override int GetHashCode()
         {
-            unchecked
-            {
-                var hashCode = ObservationPoint.GetHashCode();
-                hashCode = (hashCode * 397) ^ EstimatedValue.GetHashCode();
-                hashCode = (hashCode * 397) ^ ObservationTime.GetHashCode();
-                
-                return hashCode;
-            }
+            var hashCode = ObservationPoint.GetHashCode();
+            hashCode = (hashCode * 397) ^ EstimatedValue.GetHashCode();
+            hashCode = (hashCode * 397) ^ ObservationTime.GetHashCode();
+
+            return hashCode;
         }
 
         public override string ToString()

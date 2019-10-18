@@ -43,15 +43,7 @@ namespace Potestas
         public double X
         {
             get => _x;
-            set
-            {
-                if (value < MinXCoordinate || value > MaxXCoordinate)
-                {
-                    throw new ArgumentOutOfRangeException(nameof(value), $"The value is not in [{MinXCoordinate.ToString()}; {MaxXCoordinate.ToString()}].");
-                }
-
-                _x = value;
-            }
+            set => SetCore(value, MinXCoordinate, MaxXCoordinate, ref _x);
         }
 
         /// <summary>
@@ -61,15 +53,7 @@ namespace Potestas
         public double Y
         {
             get => _y;
-            set
-            {
-                if (value < MinYCoordinate || value > MaxYCoordinate)
-                {
-                    throw new ArgumentOutOfRangeException(nameof(value), $"The value is not in [{MinYCoordinate.ToString()}; {MaxYCoordinate.ToString()}].");
-                }
-
-                _y = value;
-            }
+            set => SetCore(value, MinYCoordinate, MaxYCoordinate, ref _y);
         }
 
         /// <summary>
@@ -81,14 +65,7 @@ namespace Potestas
         /// <exception cref="InvalidOperationException">Thrown, when resulted X is not in [-90; 90] or resulted Y is not in [0; 180].</exception>
         public static Coordinates operator +(Coordinates first, Coordinates second)
         {
-            try
-            {
-                return new Coordinates(first.X + second.X, first.Y + second.Y);
-            }
-            catch (ArgumentOutOfRangeException e)
-            {
-                throw new InvalidOperationException($"The sum of {first} and {second} is too big for coordinates value", e);
-            }
+            return ArithmeticOperationCore(first, second, (x, y) => x + y);
         }
 
         /// <summary>
@@ -100,14 +77,7 @@ namespace Potestas
         /// <exception cref="InvalidOperationException">Thrown, when resulted X is not in [-90; 90] or resulted Y is not in [0; 180].</exception>
         public static Coordinates operator -(Coordinates first, Coordinates second)
         {
-            try
-            {
-                return new Coordinates(first.X - second.X, first.Y - second.Y);
-            }
-            catch (ArgumentOutOfRangeException e)
-            {
-                throw new InvalidOperationException($"The subtract of {first} and {second} is too big for coordinates value", e);
-            }
+            return ArithmeticOperationCore(first, second, (x, y) => x - y);
         }
 
         /// <summary>
@@ -142,7 +112,10 @@ namespace Potestas
         /// <param name="obj">The object to compare with the current instance.</param>
         /// <returns>
         /// <see langword="true" /> if <paramref name="obj" /> and this instance are the same type and represent the same value; otherwise, <see langword="false" />.</returns>
-        public override bool Equals(object obj) => obj is Coordinates other && this.Equals(other);
+        public override bool Equals(object obj)
+        {
+            return obj is Coordinates other && this.Equals(other);
+        }
 
         /// <summary>
         /// Returns the hash code for this instance.
@@ -150,10 +123,7 @@ namespace Potestas
         /// <returns>A 32-bit signed integer that is the hash code for this instance.</returns>
         public override int GetHashCode()
         {
-            unchecked
-            {
-                return (X.GetHashCode() * 397) ^ Y.GetHashCode();
-            }
+            return (X.GetHashCode() * 397) ^ Y.GetHashCode();
         }
 
         /// <summary>
@@ -163,6 +133,28 @@ namespace Potestas
         public override string ToString()
         {
             return $"Coordinates: X = {X.ToString()}, Y = {Y.ToString()}";
+        }
+
+        private void SetCore(double value, double minCoordinate, double maxCoordinate, ref double toBeSet)
+        {
+            if (value < minCoordinate || value > maxCoordinate)
+            {
+                throw new ArgumentOutOfRangeException(nameof(value), $"The value is not in [{minCoordinate.ToString()}; {maxCoordinate.ToString()}].");
+            }
+
+            toBeSet = value;
+        }
+
+        private static Coordinates ArithmeticOperationCore(Coordinates first, Coordinates second, Func<double, double, double> arithmeticOperation)
+        {
+            try
+            {
+                return new Coordinates(arithmeticOperation(first.X, second.X), arithmeticOperation(first.Y, second.Y));
+            }
+            catch (ArgumentOutOfRangeException e)
+            {
+                throw new InvalidOperationException($"The result of arithmetic operation of {first} and {second} is out of range for coordinates value", e);
+            }
         }
     }
 }

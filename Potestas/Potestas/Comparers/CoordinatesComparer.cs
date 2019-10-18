@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using System.Configuration;
+using Potestas.Configuration;
 using Potestas.ExtensionMethods;
 
 namespace Potestas.Comparers
@@ -14,9 +14,9 @@ namespace Potestas.Comparers
         /// <summary>
         /// Initializes a new instance of <see cref="CoordinatesComparer"/>
         /// </summary>
-        public CoordinatesComparer()
+        public CoordinatesComparer(IConfiguration configuration)
         {
-            if (!double.TryParse(ConfigurationManager.AppSettings["precision"], out _precision))
+            if (!double.TryParse(configuration.GetValue("precision"), out _precision))
             {
                 _precision = 0.000000001;
             }

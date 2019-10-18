@@ -1,6 +1,7 @@
 ﻿using System;
 using Moq;
 using Potestas.Comparers;
+using Potestas.Configuration;
 using Potestas.Tests.TestHelpers;
 using Xunit;
 
@@ -8,9 +9,15 @@ namespace Potestas.Tests.Comparers
 {
     public class EstimatedValueEqualityComparerTests
     {
-        private readonly EstimatedValueEqualityComparer _estimatedValueEqualityComparer = new EstimatedValueEqualityComparer();
+        private readonly EstimatedValueEqualityComparer _estimatedValueEqualityComparer;
+        private readonly Mock<IConfiguration> _configurationMock = new Mock<IConfiguration>();
         private readonly Mock<IEnergyObservation> _firstObservationMock = new Mock<IEnergyObservation>();
         private readonly Mock<IEnergyObservation> _secondObservationMock = new Mock<IEnergyObservation>();
+
+        public EstimatedValueEqualityComparerTests()
+        {
+            _estimatedValueEqualityComparer = new EstimatedValueEqualityComparer(_configurationMock.Object);
+        }
 
         [Theory]
         [ClassData(typeof(EqualsWithNullsTestData))]

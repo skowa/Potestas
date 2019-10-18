@@ -1,6 +1,6 @@
 ﻿using Potestas.ExtensionMethods;
 using System.Collections.Generic;
-using System.Configuration;
+using Potestas.Configuration;
 
 namespace Potestas.Comparers
 {
@@ -14,9 +14,9 @@ namespace Potestas.Comparers
         /// <summary>
         /// Initializes a new instance of <see cref="EstimatedValueComparer"/>
         /// </summary>
-        public EstimatedValueComparer()
+        public EstimatedValueComparer(IConfiguration configuration)
         {
-            if (!double.TryParse(ConfigurationManager.AppSettings["precision"], out _precision))
+            if (!double.TryParse(configuration.GetValue("precision"), out _precision))
             {
                 _precision = 0.000000001;
             }
