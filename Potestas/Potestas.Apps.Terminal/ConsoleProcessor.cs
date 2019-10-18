@@ -1,8 +1,9 @@
 ﻿using System;
+using Potestas.Observations;
 
 namespace Potestas.Apps.Terminal
 {
-    class ConsoleProcessor : IEnergyObservationProcessor
+    class ConsoleProcessor : IEnergyObservationProcessor<FlashObservation>
     {
         public string Description => "Logs all observations to console";
 
@@ -18,9 +19,10 @@ namespace Potestas.Apps.Terminal
             Console.ForegroundColor = ConsoleColor.White;
         }
 
-        public void OnNext(IEnergyObservation value)
+        public void OnNext(FlashObservation value)
         {
             Console.WriteLine(value);
+            Console.WriteLine();
         }
     }
 }

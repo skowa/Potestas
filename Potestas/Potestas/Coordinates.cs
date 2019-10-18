@@ -16,10 +16,6 @@ namespace Potestas
     public struct Coordinates : IEquatable<Coordinates>
     {
         private const double Precision = 0.001;
-        private const double MinXCoordinate = -90;
-        private const double MaxXCoordinate = 90;
-        private const double MinYCoordinate = 0;
-        private const double MaxYCoordinate = 180;
 
         private double _x;
         private double _y;
@@ -35,6 +31,11 @@ namespace Potestas
             X = x;
             Y = y;
         }
+
+        public static double MinXCoordinate { get; } = -90;
+        public static double MaxXCoordinate { get; } = 90;
+        public static double MinYCoordinate { get; } = 0;
+        public static double MaxYCoordinate { get; } = 180;
 
         /// <summary>
         /// Get or sets the X coordinate.

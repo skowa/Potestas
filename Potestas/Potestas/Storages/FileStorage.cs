@@ -6,7 +6,7 @@ namespace Potestas.Storages
 {
     /* TASK. Implement file storage
      */
-    class FileStorage : IEnergyObservationStorage
+    class FileStorage<T> : IEnergyObservationStorage<T> where T : IEnergyObservation
     {
         public string Description => throw new NotImplementedException();
 
@@ -14,7 +14,7 @@ namespace Potestas.Storages
 
         public bool IsReadOnly => throw new NotImplementedException();
 
-        public void Add(IEnergyObservation item)
+        public void Add(T item)
         {
             throw new NotImplementedException();
         }
@@ -24,22 +24,22 @@ namespace Potestas.Storages
             throw new NotImplementedException();
         }
 
-        public bool Contains(IEnergyObservation item)
+        public bool Contains(T item)
         {
             throw new NotImplementedException();
         }
 
-        public void CopyTo(IEnergyObservation[] array, int arrayIndex)
+        public void CopyTo(T[] array, int arrayIndex)
         {
             throw new NotImplementedException();
         }
 
-        public IEnumerator<IEnergyObservation> GetEnumerator()
+        public IEnumerator<T> GetEnumerator()
         {
             throw new NotImplementedException();
         }
 
-        public bool Remove(IEnergyObservation item)
+        public bool Remove(T item)
         {
             throw new NotImplementedException();
         }

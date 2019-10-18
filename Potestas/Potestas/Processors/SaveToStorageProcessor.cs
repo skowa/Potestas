@@ -2,11 +2,11 @@
 
 namespace Potestas.Processors
 {
-    public class SaveToStorageProcessor : IEnergyObservationProcessor
+    public class SaveToStorageProcessor<T> : IEnergyObservationProcessor<T> where T : IEnergyObservation
     {
-        private readonly IEnergyObservationStorage _storage;
+        private readonly IEnergyObservationStorage<T> _storage;
 
-        public SaveToStorageProcessor(IEnergyObservationStorage storage)
+        public SaveToStorageProcessor(IEnergyObservationStorage<T> storage)
         {
             _storage = storage;
         }
@@ -23,7 +23,7 @@ namespace Potestas.Processors
             throw new NotImplementedException();
         }
 
-        public void OnNext(IEnergyObservation value)
+        public void OnNext(T value)
         {
             _storage.Add(value);
         }

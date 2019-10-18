@@ -17,11 +17,11 @@ namespace Potestas
         Failed
     }
 
-    public interface ISourceRegistration
+    public interface ISourceRegistration<T> where T : IEnergyObservation
     {
         SourceStatus Status { get; }
 
-        IReadOnlyCollection<IProcessingGroup> ProcessingUnits { get; }
+        IReadOnlyCollection<IProcessingGroup<T>> ProcessingUnits { get; }
 
         Task Start();
 
@@ -29,45 +29,45 @@ namespace Potestas
 
         void Unregister();
 
-        IProcessingGroup AttachProcessingGroup(IProcessingFactory factory);
+        IProcessingGroup<T> AttachProcessingGroup(IProcessingFactory<T> factory);
     }
 
-    public interface IProcessingGroup
+    public interface IProcessingGroup<T> where T : IEnergyObservation
     {
-        IEnergyObservationProcessor Processor { get; }
+        IEnergyObservationProcessor<T> Processor { get; }
 
-        IEnergyObservationStorage Storage { get; }
+        IEnergyObservationStorage<T> Storage { get; }
 
         IEnergyObservationAnalizer Analizer { get; }
 
         void Detach();
     }
 
-    public interface IEnergyObservationApplicationModel
+    public interface IEnergyObservationApplicationModel<T> where T : IEnergyObservation
     {
-        IReadOnlyCollection<ISourceFactory> SourceFactories { get; }
+        IReadOnlyCollection<ISourceFactory<T>> SourceFactories { get; }
 
-        IReadOnlyCollection<IProcessingFactory> ProcessingFactories { get; }
+        IReadOnlyCollection<IProcessingFactory<T>> ProcessingFactories { get; }
 
-        IReadOnlyCollection<ISourceRegistration> RegisteredSources { get; }
+        IReadOnlyCollection<ISourceRegistration<T>> RegisteredSources { get; }
 
         void LoadPlugin(Assembly assembly);
 
-        ISourceRegistration CreateAndRegisterSource(ISourceFactory factory);
+        ISourceRegistration<T> CreateAndRegisterSource(ISourceFactory<T> factory);
     }
 
-    class RegisteredSourceProcessingGroup : IProcessingGroup
+    class RegisteredSourceProcessingGroup<T> : IProcessingGroup<T> where T : IEnergyObservation
     {
-        private readonly RegisteredEnergyObservationSourceWrapper _sourceRegistration;
+        private readonly RegisteredEnergyObservationSourceWrapper<T> _sourceRegistration;
         private readonly IDisposable _processorSubscription;
 
-        public IEnergyObservationProcessor Processor { get; }
+        public IEnergyObservationProcessor<T> Processor { get; }
 
-        public IEnergyObservationStorage Storage { get; }
+        public IEnergyObservationStorage<T> Storage { get; }
 
         public IEnergyObservationAnalizer Analizer { get; }
 
-        public RegisteredSourceProcessingGroup(RegisteredEnergyObservationSourceWrapper sourceRegistration, IProcessingFactory factory)
+        public RegisteredSourceProcessingGroup(RegisteredEnergyObservationSourceWrapper<T> sourceRegistration, IProcessingFactory<T> factory)
         {
             _sourceRegistration = sourceRegistration;
             Processor = factory.CreateProcessor();
@@ -84,41 +84,41 @@ namespace Potestas
         }
     }
 
-    class RegisteredEnergyObservationSourceWrapper : ISourceRegistration, IEnergyObservationProcessor
+    class RegisteredEnergyObservationSourceWrapper<T> : ISourceRegistration<T>, IEnergyObservationProcessor<T> where T : IEnergyObservation
     {
-        private readonly ApplicationFrame _app;
-        private readonly IEnergyObservationSource _inner;
+        private readonly ApplicationFrame<T> _app;
+        private readonly IEnergyObservationSource<T> _inner;
         private readonly IDisposable _internalSubscription;
-        private readonly List<IProcessingGroup> _processingGroups;
+        private readonly List<IProcessingGroup<T>> _processingGroups;
         private CancellationTokenSource _cts;
 
-        public RegisteredEnergyObservationSourceWrapper(ApplicationFrame app, IEnergyObservationSource inner)
+        public RegisteredEnergyObservationSourceWrapper(ApplicationFrame<T> app, IEnergyObservationSource<T> inner)
         {
             _app = app;
             _inner = inner;
-            _processingGroups = new List<IProcessingGroup>();
+            _processingGroups = new List<IProcessingGroup<T>>();
             Subscribe(this);
         }
 
         public SourceStatus Status { get; private set; }
 
-        public IReadOnlyCollection<IProcessingGroup> ProcessingUnits => _processingGroups.AsReadOnly();
+        public IReadOnlyCollection<IProcessingGroup<T>> ProcessingUnits => _processingGroups.AsReadOnly();
 
         public string Description => "Internal application listener to track Sources State";
 
-        internal IDisposable Subscribe(IEnergyObservationProcessor processor)
+        internal IDisposable Subscribe(IEnergyObservationProcessor<T> processor)
         {
             return _inner.Subscribe(processor);
         }
 
-        public IProcessingGroup AttachProcessingGroup(IProcessingFactory factory)
+        public IProcessingGroup<T> AttachProcessingGroup(IProcessingFactory<T> factory)
         {
-            var processingGroup = new RegisteredSourceProcessingGroup(this, factory);
+            var processingGroup = new RegisteredSourceProcessingGroup<T>(this, factory);
             _processingGroups.Add(processingGroup);
             return processingGroup;
         }
 
-        internal void RemoveProcessingGroup(IProcessingGroup processingGroup)
+        internal void RemoveProcessingGroup(IProcessingGroup<T> processingGroup)
         {
             _processingGroups.Remove(processingGroup);
         }
@@ -127,7 +127,7 @@ namespace Potestas
 
         public void OnError(Exception error) => Status = SourceStatus.Failed;
 
-        public void OnNext(IEnergyObservation value) => Status = SourceStatus.Running;
+        public void OnNext(T value) => Status = SourceStatus.Running;
 
         public Task Start()
         {
@@ -148,23 +148,23 @@ namespace Potestas
         }
     }
 
-    public sealed class ApplicationFrame : IEnergyObservationApplicationModel
+    public sealed class ApplicationFrame<T> : IEnergyObservationApplicationModel<T> where T : IEnergyObservation
     {
-        private readonly static FactoriesLoader _factoriesLoader = new FactoriesLoader();
+        private readonly static FactoriesLoader<T> _factoriesLoader = new FactoriesLoader<T>();
 
-        private readonly List<ISourceFactory> _sourceFactories;
-        private readonly List<IProcessingFactory> _processingFactories;
-        private readonly List<RegisteredEnergyObservationSourceWrapper> _registeredSources;
+        private readonly List<ISourceFactory<T>> _sourceFactories;
+        private readonly List<IProcessingFactory<T>> _processingFactories;
+        private readonly List<RegisteredEnergyObservationSourceWrapper<T>> _registeredSources;
 
-        public IReadOnlyCollection<ISourceFactory> SourceFactories => _sourceFactories.AsReadOnly();
-        public IReadOnlyCollection<IProcessingFactory> ProcessingFactories => _processingFactories.AsReadOnly();
-        public IReadOnlyCollection<ISourceRegistration> RegisteredSources => _registeredSources.AsReadOnly();
+        public IReadOnlyCollection<ISourceFactory<T>> SourceFactories => _sourceFactories.AsReadOnly();
+        public IReadOnlyCollection<IProcessingFactory<T>> ProcessingFactories => _processingFactories.AsReadOnly();
+        public IReadOnlyCollection<ISourceRegistration<T>> RegisteredSources => _registeredSources.AsReadOnly();
 
         public ApplicationFrame()
         {
-            _registeredSources = new List<RegisteredEnergyObservationSourceWrapper>();
-            _processingFactories = new List<IProcessingFactory>();
-            _sourceFactories = new List<ISourceFactory>();
+            _registeredSources = new List<RegisteredEnergyObservationSourceWrapper<T>>();
+            _processingFactories = new List<IProcessingFactory<T>>();
+            _sourceFactories = new List<ISourceFactory<T>>();
         }
 
         public void LoadPlugin(Assembly assembly)
@@ -174,15 +174,15 @@ namespace Potestas
             _sourceFactories.AddRange(sourceFactories);
         }
 
-        public ISourceRegistration CreateAndRegisterSource(ISourceFactory factory)
+        public ISourceRegistration<T> CreateAndRegisterSource(ISourceFactory<T> factory)
         {
             var source = factory.CreateSource();
-            var registration = new RegisteredEnergyObservationSourceWrapper(this, source);
+            var registration = new RegisteredEnergyObservationSourceWrapper<T>(this, source);
             _registeredSources.Add(registration);
             return registration;
         }
 
-        internal void RemoveRegistration(RegisteredEnergyObservationSourceWrapper registration)
+        internal void RemoveRegistration(RegisteredEnergyObservationSourceWrapper<T> registration)
         {
             _registeredSources.Remove(registration);
         }

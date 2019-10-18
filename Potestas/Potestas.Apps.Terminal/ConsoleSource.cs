@@ -9,9 +9,9 @@ namespace Potestas.Apps.Terminal
     class ConsoleSourceSubscription : IDisposable
     {
         private readonly ConsoleSource _source;
-        private readonly IObserver<IEnergyObservation> _processor;
+        private readonly IObserver<FlashObservation> _processor;
 
-        public ConsoleSourceSubscription(ConsoleSource source, IObserver<IEnergyObservation> processor)
+        public ConsoleSourceSubscription(ConsoleSource source, IObserver<FlashObservation> processor)
         {
             _source = source;
             _processor = processor;
@@ -23,15 +23,15 @@ namespace Potestas.Apps.Terminal
         }
     }
 
-    class ConsoleSource : IEnergyObservationSource
+    class ConsoleSource : IEnergyObservationSource<FlashObservation>
     {
-        private readonly List<IObserver<IEnergyObservation>> _processors;
+        private readonly List<IObserver<FlashObservation>> _processors;
 
         public string Description => "Console input energy observation";
 
         public ConsoleSource()
         {
-            _processors = new List<IObserver<IEnergyObservation>>();
+            _processors = new List<IObserver<FlashObservation>>();
         }
 
         public async Task Run(CancellationToken cancellationToken)
@@ -100,13 +100,13 @@ namespace Potestas.Apps.Terminal
             }
         }
 
-        public IDisposable Subscribe(IObserver<IEnergyObservation> observer)
+        public IDisposable Subscribe(IObserver<FlashObservation> observer)
         {
             _processors.Add(observer);
             return new ConsoleSourceSubscription(this, observer);
         }
 
-        internal void Unsubscribe(IObserver<IEnergyObservation> observer)
+        internal void Unsubscribe(IObserver<FlashObservation> observer)
         {
             _processors.Remove(observer);
         }

@@ -1,20 +1,24 @@
 ﻿using Potestas.Analizers;
 using Potestas.Storages;
 using System;
+using System.Threading;
+using System.Threading.Tasks;
+using Potestas.Observations;
+using Potestas.Sources;
 
 namespace Potestas.Apps.Terminal
 {
     static class Program
     {
-        private static readonly IEnergyObservationApplicationModel _app;
-        private static ISourceRegistration _testRegistration;
+        private static readonly IEnergyObservationApplicationModel<FlashObservation> _app;
+        private static ISourceRegistration<FlashObservation> _testRegistration;
 
         static Program()
         {
-            _app = new ApplicationFrame();
+            _app = new ApplicationFrame<FlashObservation>();
         }
 
-        static void Main()
+        static async Task Main()
         {
             Console.CancelKeyPress += Console_CancelKeyPress;
             _testRegistration = _app.CreateAndRegisterSource(new ConsoleSourceFactory());
@@ -30,34 +34,34 @@ namespace Potestas.Apps.Terminal
         }
     }
 
-    class ConsoleSourceFactory : ISourceFactory
+    class ConsoleSourceFactory : ISourceFactory<FlashObservation>
     {
-        public IEnergyObservationEventSource CreateEventSource()
+        public IEnergyObservationEventSource<FlashObservation> CreateEventSource()
         {
             throw new NotImplementedException();
         }
 
-        public IEnergyObservationSource CreateSource()
+        public IEnergyObservationSource<FlashObservation> CreateSource()
         {
-            return new ConsoleSource();
+            return new RandomEnergySource();
         }
     }
 
-    class ConsoleProcessingFactory : IProcessingFactory
+    class ConsoleProcessingFactory : IProcessingFactory<FlashObservation>
     {
         public IEnergyObservationAnalizer CreateAnalizer()
         {
             return new LINQAnalizer();
         }
 
-        public IEnergyObservationProcessor CreateProcessor()
+        public IEnergyObservationProcessor<FlashObservation> CreateProcessor()
         {
             return new ConsoleProcessor();
         }
 
-        public IEnergyObservationStorage CreateStorage()
+        public IEnergyObservationStorage<FlashObservation> CreateStorage()
         {
-            return new ListStorage();
+            return new ListStorage<FlashObservation>();
         }
     }
 }

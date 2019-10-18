@@ -9,9 +9,9 @@ namespace Potestas
      * 3. Consider refactoring of factory interfaces.
      * 4. Consider making an extension for Assembly class.
      */
-    class FactoriesLoader
+    internal class FactoriesLoader<T> where T : IEnergyObservation
     {
-        public (ISourceFactory[], IProcessingFactory[]) Load(Assembly assembly)
+        public (ISourceFactory<T>[], IProcessingFactory<T>[]) Load(Assembly assembly)
         {
             throw new NotImplementedException();
         }
