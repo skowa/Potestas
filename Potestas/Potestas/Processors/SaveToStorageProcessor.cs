@@ -15,16 +15,21 @@ namespace Potestas.Processors
 
         public void OnCompleted()
         {
-            throw new NotImplementedException();
+            _storage.Clear();
         }
 
         public void OnError(Exception error)
         {
-            throw new NotImplementedException();
+            _storage.Clear();
         }
 
         public void OnNext(T value)
         {
+            if (!typeof(T).IsValueType && value == null)
+            {
+                throw new ArgumentNullException(nameof(value));
+            }
+
             _storage.Add(value);
         }
     }

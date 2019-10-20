@@ -1,5 +1,5 @@
-﻿using Potestas.ExtensionMethods;
-using System;
+﻿using System;
+using Potestas.ExtensionMethods;
 
 namespace Potestas.Observations
 {
@@ -20,6 +20,7 @@ namespace Potestas.Observations
     * Why immutable structure is used here?
     * TESTS: Cover this structure with unit tests
     */
+    [Serializable]
     public struct FlashObservation : IEnergyObservation, IEquatable<FlashObservation>
     {
         private const double Precision = 0.1;

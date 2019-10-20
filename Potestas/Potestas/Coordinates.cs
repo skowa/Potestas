@@ -1,5 +1,5 @@
-﻿using Potestas.ExtensionMethods;
-using System;
+﻿using System;
+using Potestas.ExtensionMethods;
 
 namespace Potestas
 {
@@ -13,6 +13,7 @@ namespace Potestas
      * 7. Implement == and != operators for this structure.
      * 8. 
      */
+    [Serializable]
     public struct Coordinates : IEquatable<Coordinates>
     {
         private const double Precision = 0.001;
