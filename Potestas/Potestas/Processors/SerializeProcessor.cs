@@ -36,7 +36,7 @@ namespace Potestas.Processors
 
         public void OnNext(T value)
         {
-            if (!typeof(T).IsValueType && value == null)
+            if ((!typeof(T).IsValueType || Nullable.GetUnderlyingType(typeof(T)) != null) && value == null)
             {
                 throw new ArgumentNullException(nameof(value));
             }
