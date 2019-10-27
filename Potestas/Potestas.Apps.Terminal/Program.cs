@@ -51,7 +51,7 @@ namespace Potestas.Apps.Terminal
     {
         public IEnergyObservationAnalizer CreateAnalizer()
         {
-            return new LINQAnalizer();
+            return new LINQAnalizer<FlashObservation>(this.CreateStorage());
         }
 
         public IEnergyObservationProcessor<FlashObservation> CreateProcessor()
