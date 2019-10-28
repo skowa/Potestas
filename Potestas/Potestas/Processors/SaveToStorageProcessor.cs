@@ -15,12 +15,12 @@ namespace Potestas.Processors
 
         public void OnCompleted()
         {
-            _storage.Clear();
+
         }
 
         public void OnError(Exception error)
         {
-            _storage.Clear();
+
         }
 
         public void OnNext(T value)
