@@ -3,6 +3,8 @@ using Potestas.Storages;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Potestas.ApplicationFrame;
+using Potestas.ApplicationFrame.SourceRegistrations;
 using Potestas.Observations;
 using Potestas.Sources;
 
