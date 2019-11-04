@@ -4,6 +4,7 @@ using Potestas.Storages;
 
 namespace Potestas.Factories
 {
+    [ExcludeFactoryCreation]
     public class ListStorageProcessingFactory<T> : IProcessingFactory<T> where T : IEnergyObservation
     {
         public IEnergyObservationProcessor<T> CreateProcessor() => new SaveToStorageProcessor<T>(this.CreateStorage());
