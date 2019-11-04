@@ -2,6 +2,7 @@
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using Potestas.Exceptions;
+using Potestas.Utils;
 
 namespace Potestas.Processors
 {
@@ -13,7 +14,7 @@ namespace Potestas.Processors
         {
             this.CheckStreamForNull(stream);
 
-            if ((!typeof(T).IsValueType || Nullable.GetUnderlyingType(typeof(T)) != null) && value == null)
+            if (Validator.IsGenericTypeNull(value))
             {
                 throw new ArgumentNullException(nameof(value));
             }

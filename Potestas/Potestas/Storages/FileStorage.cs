@@ -2,7 +2,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Potestas.Processors;
+using Potestas.Utils;
 
 namespace Potestas.Storages
 {
@@ -17,7 +19,7 @@ namespace Potestas.Storages
 
         public FileStorage(ISerializer<T> serializer, string filePath)
         {
-            if (string.IsNullOrWhiteSpace(_filePath))
+            if (string.IsNullOrWhiteSpace(filePath))
             {
                 throw new ArgumentNullException(nameof(filePath));
             }
@@ -51,13 +53,13 @@ namespace Potestas.Storages
 
         public void Add(T item)
         {
-            if (this.IsGenericTypeNull(item))
+            if (Validator.IsGenericTypeNull(item))
             {
                 throw new ArgumentNullException(nameof(item));
             }
 
             using var stream = File.Open(_filePath, FileMode.Append);
-            stream.Position = stream.Length - 1;
+            stream.Position = stream.Length;
             _serializer.Serialize(stream, item);
         }
 
@@ -69,20 +71,7 @@ namespace Potestas.Storages
 
         public bool Contains(T item)
         {
-            if (this.IsGenericTypeNull(item))
-            {
-                return false;
-            }
-
-            foreach (var entity in this)
-            {
-                if (item.Equals(entity))
-                {
-                    return true;
-                }
-            }
-
-            return false;
+            return !Validator.IsGenericTypeNull(item) && this.Any(e => e.Equals(item));
         }
 
         public void CopyTo(T[] array, int arrayIndex)
@@ -101,7 +90,7 @@ namespace Potestas.Storages
             int indexHelper = arrayIndex;
             foreach (var entity in this)
             {
-                if (arrayIndex == array.Length)
+                if (indexHelper == array.Length)
                 {
                     throw new ArgumentException($"The number of elements in the {nameof(array)} is greater than the available space from {nameof(arrayIndex)} to the end.");
                 }
@@ -129,7 +118,7 @@ namespace Potestas.Storages
 
         public bool Remove(T item)
         {
-            if (this.IsGenericTypeNull(item))
+            if (Validator.IsGenericTypeNull(item))
             {
                 throw new ArgumentNullException(nameof(item));
             }
@@ -147,11 +136,6 @@ namespace Potestas.Storages
         {
             using var stream = File.Open(_filePath, FileMode.OpenOrCreate, FileAccess.Read);
             return _lastPosition != stream.Length - 1;
-        }
-
-        private bool IsGenericTypeNull(T item)
-        {
-            return (!typeof(T).IsValueType || Nullable.GetUnderlyingType(typeof(T)) != null) && item == null;
         }
 
         private bool WriteObjectsToFileWithoutTheOneToBeDeleted(string outputName, T item)

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using Potestas.Utils;
 
 namespace Potestas.Processors
 {
@@ -31,12 +32,11 @@ namespace Potestas.Processors
         public void OnError(Exception error)
         {
             this.Dispose();
-            //I don't understand what else this processor should do here.
         }
 
         public void OnNext(T value)
         {
-            if ((!typeof(T).IsValueType || Nullable.GetUnderlyingType(typeof(T)) != null) && value == null)
+            if (Validator.IsGenericTypeNull(value))
             {
                 throw new ArgumentNullException(nameof(value));
             }
