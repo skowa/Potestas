@@ -31,23 +31,20 @@ namespace Potestas.Processors
         public void OnCompleted()
         {
             _serializeProcessor.OnCompleted();
-
-            this.Dispose();
+            this.CompleteFile();
         }
 
         public void OnError(Exception error)
         {
             _serializeProcessor.OnError(error);
-
-            this.Dispose();
+            this.CompleteFile();
         }
 
         public void OnNext(T value)
         {
             _serializeProcessor.OnNext(value);
             
-            _serializeProcessor.Stream.Seek(_serializeProcessor.PreviousObjectPosition, SeekOrigin.Begin);
-            _serializeProcessor.Stream.CopyTo(_fileStream);
+            this.CopyToFileStream();
         }
 
         public void Dispose()
@@ -58,6 +55,20 @@ namespace Potestas.Processors
                 _fileStream?.Dispose();
                 _isDisposed = true;
             }
+        }
+
+        private void CompleteFile()
+        {
+            if (_serializeProcessor.LastObjectPosition != _serializeProcessor.Stream.Position)
+            {
+                this.CopyToFileStream();
+            }
+        }
+
+        private void CopyToFileStream()
+        {
+            _serializeProcessor.Stream.Seek(_serializeProcessor.PreviousObjectPosition, SeekOrigin.Begin);
+            _serializeProcessor.Stream.CopyTo(_fileStream);
         }
     }
 }

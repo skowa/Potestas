@@ -1,4 +1,8 @@
 ﻿using System;
+using System.Globalization;
+using System.Xml;
+using System.Xml.Schema;
+using System.Xml.Serialization;
 using Potestas.ExtensionMethods;
 
 namespace Potestas.Observations
@@ -21,7 +25,7 @@ namespace Potestas.Observations
     * TESTS: Cover this structure with unit tests
     */
     [Serializable]
-    public struct FlashObservation : IEnergyObservation, IEquatable<FlashObservation>
+    public struct FlashObservation : IEnergyObservation, IEquatable<FlashObservation>, IXmlSerializable
     {
         private const double Precision = 0.1;
 
@@ -86,6 +90,33 @@ namespace Potestas.Observations
         {
             return $"FlashObservation: ObservationPoint = {ObservationPoint.ToString()}, Intensity = {Intensity.ToString()}, " +
                    $"Duration(ms) = {DurationMs.ToString()}, ObservationTime = {ObservationTime.ToString()}, EstimatedValue = {EstimatedValue.ToString()}";
+        }
+
+        XmlSchema IXmlSerializable.GetSchema() => null;
+
+        void IXmlSerializable.ReadXml(XmlReader reader)
+        {
+            reader.ReadStartElement();
+            var xmlSerializer = new XmlSerializer(typeof(Coordinates));
+            var observationPoint = (Coordinates)xmlSerializer.Deserialize(reader);
+            var intensity = reader.ReadElementContentAsDouble(nameof(Intensity), string.Empty);
+            var durationMs = reader.ReadElementContentAsInt(nameof(DurationMs), string.Empty);
+            DateTime.TryParse(reader.ReadElementContentAsString(nameof(ObservationTime), string.Empty), out var observationTime);
+            reader.Skip();
+            reader.ReadEndElement();
+
+            this = new FlashObservation(observationPoint, intensity, durationMs, observationTime);
+        }
+
+        void IXmlSerializable.WriteXml(XmlWriter writer)
+        {
+            var xmlSerializer = new XmlSerializer(typeof(Coordinates));
+            xmlSerializer.Serialize(writer, ObservationPoint);
+
+            writer.WriteElementString(nameof(Intensity), Intensity.ToString(CultureInfo.InvariantCulture));
+            writer.WriteElementString(nameof(DurationMs), DurationMs.ToString());
+            writer.WriteElementString(nameof(ObservationTime), ObservationTime.ToString(CultureInfo.InvariantCulture));
+            writer.WriteElementString(nameof(EstimatedValue), EstimatedValue.ToString(CultureInfo.InvariantCulture));
         }
     }
 }
