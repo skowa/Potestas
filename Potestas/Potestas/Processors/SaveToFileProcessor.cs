@@ -44,7 +44,7 @@ namespace Potestas.Processors
         {
             _serializeProcessor.OnNext(value);
             
-            this.CopyToFileStream();
+            this.CopyToFileStream(_serializeProcessor.PreviousObjectPosition);
         }
 
         public void Dispose()
@@ -61,13 +61,13 @@ namespace Potestas.Processors
         {
             if (_serializeProcessor.LastObjectPosition != _serializeProcessor.Stream.Position)
             {
-                this.CopyToFileStream();
+                this.CopyToFileStream(_serializeProcessor.LastObjectPosition);
             }
         }
 
-        private void CopyToFileStream()
+        private void CopyToFileStream(long position)
         {
-            _serializeProcessor.Stream.Seek(_serializeProcessor.PreviousObjectPosition, SeekOrigin.Begin);
+            _serializeProcessor.Stream.Seek(position, SeekOrigin.Begin);
             _serializeProcessor.Stream.CopyTo(_fileStream);
         }
     }
