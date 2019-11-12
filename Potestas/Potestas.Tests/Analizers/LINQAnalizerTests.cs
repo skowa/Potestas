@@ -4,6 +4,7 @@ using System.Linq;
 using Potestas.Analizers;
 using Potestas.Observations;
 using Potestas.Storages;
+using Potestas.Tests.TestHelpers;
 using Xunit;
 
 namespace Potestas.Tests.Analizers
@@ -15,18 +16,8 @@ namespace Potestas.Tests.Analizers
 
         public LINQAnalizerTests()
         {
-            _listStorage = new ListStorage<FlashObservation>
-            {
-                new FlashObservation(new Coordinates(2, 5), 25, 100, new DateTime(2019, 10, 15)),
-                new FlashObservation(new Coordinates(14, 0), 50, 200, new DateTime(2019, 10, 25)),
-                new FlashObservation(new Coordinates(16, 5), 15, 300, new DateTime(2019, 10, 13)),
-                new FlashObservation(new Coordinates(1, 16), 30, 400, new DateTime(2019, 10, 29)),
-                new FlashObservation(new Coordinates(1, 16), 25, 100, new DateTime(2019, 10, 15)),
-                new FlashObservation(new Coordinates(2, 5), 50, 200, new DateTime(2019, 10, 30)),
-                new FlashObservation(new Coordinates(1, 16), 30, 150, new DateTime(2019, 10, 26)),
-                new FlashObservation(new Coordinates(14, 0), 15, 300, new DateTime(2019, 10, 17)),
-                new FlashObservation(new Coordinates(2, 5), 35, 400, new DateTime(2019, 10, 29))
-            };
+            _listStorage = new ListStorage<FlashObservation>();
+            _listStorage.AddRange(FlashObservationBaseData.InitializeFlashObservations());
 
             _linqAnalizer = new LINQAnalizer<FlashObservation>(_listStorage);
         }

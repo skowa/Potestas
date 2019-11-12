@@ -2,18 +2,19 @@
 using System.IO;
 using System.Xml;
 using Potestas.Observations;
+using Potestas.Tests.TestHelpers;
 using Potestas.XmlPlugin;
 using Xunit;
 
 namespace Potestas.Tests.Processors
 {
-    public class SerializeToXmlProcessorTests : BaseProcessorTests
+    public class SerializeToXmlProcessorTests
     {
         [Fact]
         public void OnNextTest_SomeFlashObservations_TheyAreWrittenCorrectlyToTheStream()
         {
             var xmlSerializer = new XmlSerializer<FlashObservation>();
-            List<FlashObservation> flashObservations = this.CreateFlashObservations();
+            List<FlashObservation> flashObservations = FlashObservationBaseData.InitializeFlashObservations();
 
             using var serializeToXmlProcessor = new SerializeToXmlProcessor<FlashObservation>();
             serializeToXmlProcessor.OnNext(flashObservations[0]);

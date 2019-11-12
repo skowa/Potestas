@@ -2,11 +2,12 @@
 using System.IO;
 using Potestas.Observations;
 using Potestas.Processors;
+using Potestas.Tests.TestHelpers;
 using Xunit;
 
 namespace Potestas.Tests.Processors
 {
-    public class SaveToFileProcessorTests : BaseProcessorTests
+    public class SaveToFileProcessorTests
     {
         [Fact]
         public void OnNextTest_SomeFlashObservations_TheyAreWrittenCorrectlyToTheFile()
@@ -17,7 +18,7 @@ namespace Potestas.Tests.Processors
                 File.Delete(filePath);
             }
 
-            List<FlashObservation> flashObservations = this.CreateFlashObservations();
+            List<FlashObservation> flashObservations = FlashObservationBaseData.InitializeFlashObservations();
             using var stream = new MemoryStream();
             var serializer = new BinarySerializer<FlashObservation>();
             serializer.Serialize(stream, flashObservations[0]);

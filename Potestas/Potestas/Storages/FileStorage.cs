@@ -10,7 +10,7 @@ namespace Potestas.Storages
 {
     /* TASK. Implement file storage
      */
-    public class FileStorage<T> : IEnergyObservationStorage<T>, ICollection<T>, IEnumerable<T>, IEnumerable where T : IEnergyObservation
+    public class FileStorage<T> : BaseFileStorage<T>, IEnergyObservationStorage<T>, ICollection<T>, IEnumerable<T>, IEnumerable where T : IEnergyObservation
     {
         private readonly ISerializer<T> _serializer;
         private readonly string _filePath;
@@ -69,39 +69,9 @@ namespace Potestas.Storages
             fileStream.SetLength(0);
         }
 
-        public bool Contains(T item)
-        {
-            return !Validator.IsGenericTypeNull(item) && this.Any(e => e.Equals(item));
-        }
+        public bool Contains(T item) => this.Contains(item, this);
 
-        public void CopyTo(T[] array, int arrayIndex)
-        {
-            if (array == null)
-            {
-                throw new ArgumentNullException(nameof(array));
-            }
-
-            if (arrayIndex < 0 || arrayIndex >= array.Length)
-            {
-                throw new ArgumentException($"{nameof(arrayIndex)} is out of range");
-            }
-
-            var arrayHelper = new T[array.Length];
-            int indexHelper = arrayIndex;
-            foreach (var entity in this)
-            {
-                if (indexHelper == array.Length)
-                {
-                    throw new ArgumentException($"The number of elements in the {nameof(array)} is greater than the available space from {nameof(arrayIndex)} to the end.");
-                }
-
-                // The values are written to the temporary array in order to keep the source array without updates when exception is thrown.
-                arrayHelper[indexHelper] = entity;
-                indexHelper++;
-            }
-
-            Array.Copy(arrayHelper, arrayIndex, array, arrayIndex, indexHelper - arrayIndex - 1);
-        }
+        public void CopyTo(T[] array, int arrayIndex) => this.CopyTo(array, arrayIndex, this);
 
         public IEnumerator<T> GetEnumerator()
         {
@@ -169,7 +139,6 @@ namespace Potestas.Storages
                 File.Delete(_filePath);
                 File.Move(outputName, _filePath);
             }
-
         }
     }
 }
