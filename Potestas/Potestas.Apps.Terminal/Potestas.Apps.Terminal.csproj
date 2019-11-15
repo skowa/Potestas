@@ -6,6 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Potestas.XmlPlugin\Potestas.XmlPlugin.csproj" />
     <ProjectReference Include="..\Potestas\Potestas.csproj" />
   </ItemGroup>
 

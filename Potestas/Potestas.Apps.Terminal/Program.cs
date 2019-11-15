@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 using Potestas.Analizers;
 using Potestas.ApplicationFrame;
 using Potestas.ApplicationFrame.ProcessingGroups;
 using Potestas.ApplicationFrame.SourceRegistrations;
+using Potestas.Factories;
 using Potestas.Observations;
 using Potestas.Sources;
 using Potestas.Storages;
@@ -47,14 +49,22 @@ namespace Potestas.Apps.Terminal
                 Console.WriteLine($"{i}: {appSourceFactory.GetType()}");
             }
 
-            ISourceFactory<FlashObservation> sourceFactory = null;
             var userChoiceIsValid = false;
-            while (!userChoiceIsValid)
+            ISourceFactory<FlashObservation> sourceFactory = null;
+            if (App.SourceFactories.Count == 0)
             {
-                if (TryReadUserInput(0, App.SourceFactories.Count, out int userChoice))
+                sourceFactory = new RandomEnergySourceFactory();
+                Console.WriteLine($"The source factory is not defined in plugin, so it will be {nameof(RandomEnergySource)}");
+            }
+            else
+            {
+                while (!userChoiceIsValid)
                 {
-                    userChoiceIsValid = true;
-                    sourceFactory = App.SourceFactories.ElementAt(userChoice - 1);
+                    if (TryReadUserInput(0, App.SourceFactories.Count, out int userChoice))
+                    {
+                        userChoiceIsValid = true;
+                        sourceFactory = App.SourceFactories.ElementAt(userChoice - 1);
+                    }
                 }
             }
 
@@ -80,7 +90,8 @@ namespace Potestas.Apps.Terminal
             Console.WriteLine($"Processing source factory {sourceFactory.GetType()}...");
             ISourceRegistration<FlashObservation> sourceRegistration = App.CreateAndRegisterSource(sourceFactory);
             IProcessingGroup<FlashObservation> processingGroup = sourceRegistration.AttachProcessingGroup(processingFactory);
-            SourceRegistrations.Add(sourceRegistration); Console.WriteLine("Click Ctrl+C to stop generating values");
+            SourceRegistrations.Add(sourceRegistration); 
+            Console.WriteLine("Click Ctrl+C to stop generating values");
             sourceRegistration.Start().Wait();
 
             ProcessAnalyzer(processingGroup.Analizer);
@@ -150,18 +161,25 @@ namespace Potestas.Apps.Terminal
 
         private static void PluginLoading()
         {
+            var potestas = "Potestas.dll";
+            var xmlPlugin = "Potestas.XmlPlugin.dll";
+
             Console.WriteLine("Choose what plugin to use");
-            Console.WriteLine("1. Potestas.dll");
+            Console.WriteLine($"1. {potestas}");
+            Console.WriteLine($"2. {xmlPlugin}");
 
             var pluginIsChosen = false;
             while(!pluginIsChosen)
             {
-                if (TryReadUserInput(0, 1, out int chosenPlugin))
+                if (TryReadUserInput(0, 2, out int chosenPlugin))
                 {
                     switch (chosenPlugin)
                     {
                         case 1:
-                            App.LoadPlugin(Assembly.LoadFrom("Potestas.dll"));
+                            App.LoadPlugin(Assembly.LoadFrom(potestas));
+                            break;
+                        case 2:
+                            App.LoadPlugin(Assembly.LoadFrom(xmlPlugin));
                             break;
                     }
 

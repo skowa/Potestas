@@ -12,7 +12,19 @@ namespace Potestas.XmlPlugin
         private const string ObservationTime = "ObservationTime";
         private const string ObservationPoint = "Coordinates";
 
-        private readonly IEnumerable<XElement> _elements;
+        private readonly string _filePath;
+        private IEnumerable<XElement> _elements;
+        private bool _isDocLoaded = false;
+
+        public XmlAnalyzer(string filePath)
+        {
+            if (string.IsNullOrWhiteSpace(filePath))
+            {
+                throw new ArgumentNullException(nameof(filePath));
+            }
+
+            _filePath = filePath;
+        }
 
         public XmlAnalyzer(XDocument xDocument)
         {
@@ -26,69 +38,70 @@ namespace Potestas.XmlPlugin
                 throw new ArgumentException($"{nameof(xDocument)} is empty. There is no data to analyze.");
             }
 
-            _elements = xDocument.Root.Elements(typeof(T).Name);
+            _isDocLoaded = true;
+            _elements = this.GetElements(xDocument);
         }
 
         public IDictionary<double, int> GetDistributionByEnergyValue()
         {
-            return _elements.GroupBy(e => e.FromXElement<T>(), new EstimatedValueEqualityComparer(new Configuration.Configuration()))
+            return this.GetElements().GroupBy(e => e.FromXElement<T>(), new EstimatedValueEqualityComparer(new Configuration.Configuration()))
                 .ToDictionary(group => group.Key.EstimatedValue, group => group.Count());
         }
 
         public IDictionary<Coordinates, int> GetDistributionByCoordinates()
         {
-            return _elements.GroupBy(e => e.FromXElement<T>(), new ObservationPointEqualityComparer())
+            return this.GetElements().GroupBy(e => e.FromXElement<T>(), new ObservationPointEqualityComparer())
                 .ToDictionary(group => group.Key.ObservationPoint, group => group.Count());
         }
 
         public IDictionary<DateTime, int> GetDistributionByObservationTime()
         {
-            return _elements.GroupBy(e => e.FromXElement<T>(), new ObservationTimeEqualityComparer())
+            return this.GetElements().GroupBy(e => e.FromXElement<T>(), new ObservationTimeEqualityComparer())
                 .ToDictionary(group => group.Key.ObservationTime, group => group.Count());
         }
 
         public double GetMaxEnergy()
         {
-            return _elements.Max(e => (double) e.Element(EstimatedValue));
+            return this.GetElements().Max(e => (double) e.Element(EstimatedValue));
         }
 
         public double GetMaxEnergy(Coordinates coordinates)
         {
-            return _elements.Where(e => e.Element(ObservationPoint).FromXElement<Coordinates>() == coordinates)
+            return this.GetElements().Where(e => e.Element(ObservationPoint).FromXElement<Coordinates>() == coordinates)
                 .Max(e => (double) e.Element(EstimatedValue));
         }
 
         public double GetMaxEnergy(DateTime dateTime)
         {
-            return _elements.Where(e => (DateTime) e.Element(ObservationTime) == dateTime)
+            return this.GetElements().Where(e => (DateTime) e.Element(ObservationTime) == dateTime)
                 .Max(e => (double) e.Element(EstimatedValue));
         }
 
         public double GetMinEnergy()
         {
-            return _elements.Min(e => (double) e.Element(EstimatedValue));
+            return this.GetElements().Min(e => (double) e.Element(EstimatedValue));
         }
 
         public double GetMinEnergy(Coordinates coordinates)
         {
-            return _elements.Where(e => e.Element(ObservationPoint).FromXElement<Coordinates>() == coordinates)
+            return this.GetElements().Where(e => e.Element(ObservationPoint).FromXElement<Coordinates>() == coordinates)
                 .Min(e => (double) e.Element(EstimatedValue));
         }
 
         public double GetMinEnergy(DateTime dateTime)
         {
-            return _elements.Where(e => (DateTime) e.Element(ObservationTime) == dateTime)
+            return this.GetElements().Where(e => (DateTime) e.Element(ObservationTime) == dateTime)
                 .Min(e => (double) e.Element(EstimatedValue));
         }
 
         public double GetAverageEnergy()
         {
-            return _elements.Average(e => (double)e.Element(EstimatedValue));
+            return this.GetElements().Average(e => (double)e.Element(EstimatedValue));
         }
 
         public double GetAverageEnergy(DateTime startFrom, DateTime endBy)
         {
-            return _elements
+            return this.GetElements()
                 .Where(e =>
                 {
                     var observationTime = (DateTime) e.Element(ObservationTime);
@@ -100,7 +113,7 @@ namespace Potestas.XmlPlugin
 
         public double GetAverageEnergy(Coordinates rectTopLeft, Coordinates rectBottomRight)
         {
-            return _elements.Where(e =>
+            return this.GetElements().Where(e =>
                 {
                     double x = e.Element(ObservationPoint).FromXElement<Coordinates>().X;
                     double y = e.Element(ObservationPoint).FromXElement<Coordinates>().Y;
@@ -115,26 +128,43 @@ namespace Potestas.XmlPlugin
 
         public DateTime GetMaxEnergyTime()
         {
-            return _elements.Max(e => (DateTime) e.Element(ObservationTime));
+            return this.GetElements().Max(e => (DateTime) e.Element(ObservationTime));
         }
 
         public Coordinates GetMaxEnergyPosition()
         {
-            return _elements.Select(e => e.Element(ObservationPoint).FromXElement<Coordinates>())
+            return this.GetElements().Select(e => e.Element(ObservationPoint).FromXElement<Coordinates>())
                 .OrderBy(e => e, new CoordinatesComparer(new Configuration.Configuration()))
                 .Last();
         }
 
         public DateTime GetMinEnergyTime()
         {
-            return _elements.Min(e => (DateTime)e.Element(ObservationTime));
+            return this.GetElements().Min(e => (DateTime)e.Element(ObservationTime));
         }
 
         public Coordinates GetMinEnergyPosition()
         {
-            return _elements.Select(e => e.Element(ObservationPoint).FromXElement<Coordinates>())
+            return this.GetElements().Select(e => e.Element(ObservationPoint).FromXElement<Coordinates>())
                 .OrderBy(e => e, new CoordinatesComparer(new Configuration.Configuration()))
                 .First();
+        }
+
+        private IEnumerable<XElement> GetElements()
+        {
+            if (!_isDocLoaded)
+            {
+                var xDocument = XDocument.Load(_filePath);
+                _isDocLoaded = true;
+                _elements = this.GetElements(xDocument);
+            }
+
+            return _elements;
+        }
+
+        private IEnumerable<XElement> GetElements(XDocument xDocument)
+        {
+            return xDocument.Root?.Elements(typeof(T).Name);
         }
     }
 }

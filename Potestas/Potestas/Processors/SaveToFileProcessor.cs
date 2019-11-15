@@ -32,12 +32,14 @@ namespace Potestas.Processors
         {
             _serializeProcessor.OnCompleted();
             this.CompleteFile();
+            this.Dispose();
         }
 
         public void OnError(Exception error)
         {
             _serializeProcessor.OnError(error);
             this.CompleteFile();
+            this.Dispose();
         }
 
         public void OnNext(T value)
