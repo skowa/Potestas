@@ -10,28 +10,29 @@ namespace Potestas.Processors
      */
     public class SerializeProcessor<T> : IDisposable, IEnergyObservationProcessor<T> where T : IEnergyObservation
     {
-        private readonly ISerializer<T> _serializer;
         private bool _isDisposed;
 
         public SerializeProcessor(ISerializer<T> serializer)
         {
-            _serializer = serializer ?? throw new ArgumentNullException(nameof(serializer));
+            Serializer = serializer ?? throw new ArgumentNullException(nameof(serializer));
             Stream = new MemoryStream();
         }
 
         public string Description => "The processor which serializes IEnergyObservation to the provided stream.";
 
-        internal Stream Stream { get; }
+        public Stream Stream { get; }
+        protected internal long LastObjectPosition { get; protected set; }
         internal long PreviousObjectPosition { get; private set; }
+        protected ISerializer<T> Serializer { get; }
 
-        public void OnCompleted()
+        public virtual void OnCompleted()
         {
-            this.Dispose();
+
         }
 
-        public void OnError(Exception error)
+        public virtual void OnError(Exception error)
         {
-            this.Dispose();
+
         }
 
         public void OnNext(T value)
@@ -42,16 +43,22 @@ namespace Potestas.Processors
             }
 
             PreviousObjectPosition = Stream.Position;
-            _serializer.Serialize(Stream, value);
+            this.SerializeToStream(value);
+            LastObjectPosition = Stream.Position;
         }
 
-        public void Dispose()
+        public virtual void Dispose()
         {
             if (!_isDisposed)
             {
                 Stream?.Dispose();
                 _isDisposed = true;
             }
+        }
+
+        protected virtual void SerializeToStream(T value)
+        {
+            Serializer.Serialize(Stream, value);
         }
     }
 }
