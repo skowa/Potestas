@@ -1,0 +1,3 @@
+The db could be uploaded as docker image using command "docker pull skowa/db:v1"
+New versions of image will be added to the repository by specifying new tags.
+To keep in touch with that new versions go to https://hub.docker.com/repository/docker/skowa/db
