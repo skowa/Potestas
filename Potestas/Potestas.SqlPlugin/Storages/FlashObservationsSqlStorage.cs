@@ -19,8 +19,8 @@ namespace Potestas.SqlPlugin.Storages
         protected override string GetInsertQuery(FlashObservation value) =>
             FlashObservationQueries.CreateInsertQuery(value);
 
-        protected override string GetDeleteQuery(FlashObservation value) =>
-            FlashObservationQueries.CreateDeleteQuery(value);
+        protected override string GetDeleteQuery(int id) =>
+            FlashObservationQueries.CreateDeleteQuery(id);
 
         protected override string GetCountQuery() => FlashObservationQueries.CreateGetCountQuery();
 

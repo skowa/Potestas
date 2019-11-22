@@ -21,9 +21,9 @@ namespace Potestas.SqlPlugin
                                     VALUES ({intensity}, {durationMs}, {observationPoint}, '{observationTime}', {estimatedValue});";
         }
 
-        public static string CreateDeleteQuery(FlashObservation value)
+        public static string CreateDeleteQuery(int id)
         {
-            return $"DELETE FROM {_tableName} WHERE Id = {value.Id}";
+            return $"DELETE FROM {_tableName} WHERE Id = {id.ToString()}";
         }
 
         public static string CreateGetAllQuery() => $"SELECT * FROM {_tableName};";

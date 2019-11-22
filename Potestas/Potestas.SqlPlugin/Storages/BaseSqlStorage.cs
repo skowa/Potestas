@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using Potestas.Configuration;
+using Potestas.SqlPlugin.Mappers;
 using Potestas.Storages;
 using Potestas.Utils;
 
@@ -51,8 +52,15 @@ namespace Potestas.SqlPlugin.Storages
         public void Clear()
         {
             var (dataSet, adapter, sqlConnection) = this.ConfigureDataSet();
-            dataSet.Tables[0].Clear();
-            adapter.Update(dataSet);
+
+            int count = dataSet.Tables[0].Rows.Count;
+            for (int i = 0; i < count; i++)
+            {
+                using var deleteCommand = new SqlCommand(this.GetDeleteQuery((int) dataSet.Tables[0].Rows[0]["Id"]), sqlConnection);
+                adapter.DeleteCommand = deleteCommand;
+                dataSet.Tables[0].Rows[0].Delete();
+                adapter.Update(dataSet);
+            }
 
             adapter.Dispose();
             sqlConnection.Dispose();
@@ -72,7 +80,7 @@ namespace Potestas.SqlPlugin.Storages
             var isDeleted = false;
 
             var (dataSet, adapter, sqlConnection) = this.ConfigureDataSet();
-            using var deleteCommand = new SqlCommand(this.GetDeleteQuery(item), sqlConnection);
+            using var deleteCommand = new SqlCommand(this.GetDeleteQuery(item.Id), sqlConnection);
             adapter.DeleteCommand = deleteCommand;
 
             dataSet.Tables[0].PrimaryKey = new[] {dataSet.Tables[0].Columns["Id"]};
@@ -107,7 +115,7 @@ namespace Potestas.SqlPlugin.Storages
 
         protected abstract string GetSelectAllQuery();
         protected abstract string GetInsertQuery(T value);
-        protected abstract string GetDeleteQuery(T value);
+        protected abstract string GetDeleteQuery(int id);
         protected abstract string GetCountQuery();
         protected abstract T DataRowToObservations(DataRow dataRow);
 

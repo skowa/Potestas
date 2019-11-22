@@ -10,8 +10,7 @@ namespace Potestas.SqlPlugin.Mappers
         internal static FlashObservation ToFlashObservation(this DataRow dataRow)
         {
             var id = (int) dataRow["Id"];
-            var coordinates = (SqlGeometry) dataRow["ObservationPoint"];
-            var observationPoint = new Coordinates(coordinates.STX.Value, coordinates.STY.Value);
+            var observationPoint = ((SqlGeometry)dataRow["ObservationPoint"]).ToCoordinates();
             var intensity = (double) dataRow["Intensity"];
             var durationMs = (int) dataRow["DurationMs"];
             var observationTime = (DateTime) dataRow["ObservationTime"];
