@@ -29,24 +29,39 @@ namespace Potestas.Observations
     {
         private const double Precision = 0.1;
 
-        public FlashObservation(Coordinates observationPoint, double intensity, int durationMs) 
-            : this(observationPoint, intensity, durationMs, DateTime.Now)
+        public FlashObservation(Coordinates observationPoint, double intensity, int durationMs)
+            : this(0, observationPoint, intensity, durationMs, DateTime.Now)
         {
 
         }
 
-        public FlashObservation(Coordinates observationPoint, double intensity, int durationMs, DateTime observationTime) : this()
+        public FlashObservation(Coordinates observationPoint, double intensity, int durationMs, DateTime observationTime)
+            : this(0, observationPoint, intensity, durationMs, observationTime)
+        {
+
+        }
+
+        public FlashObservation(int id, Coordinates observationPoint, double intensity, int durationMs) 
+            : this(id, observationPoint, intensity, durationMs, DateTime.Now)
+        {
+
+        }
+
+        public FlashObservation(int id, Coordinates observationPoint, double intensity, int durationMs, DateTime observationTime) : this()
         {
             if (intensity < MinIntensityValue || intensity > MaxIntensityValue)
             {
                 throw new ArgumentOutOfRangeException(nameof(intensity), $"The intensity is not in [{MinIntensityValue.ToString()}; {MaxIntensityValue.ToString()}]");
             }
 
+            Id = id;
             Intensity = intensity;
             ObservationPoint = observationPoint;
             DurationMs = durationMs;
             ObservationTime = observationTime;
         }
+
+        public int Id { get; }
 
         public Coordinates ObservationPoint { get; }
 
