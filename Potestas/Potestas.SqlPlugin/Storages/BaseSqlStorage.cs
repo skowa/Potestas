@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using Potestas.Configuration;
-using Potestas.SqlPlugin.Mappers;
 using Potestas.Storages;
 using Potestas.Utils;
 
