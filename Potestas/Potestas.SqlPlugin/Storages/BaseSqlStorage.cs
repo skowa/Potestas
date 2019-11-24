@@ -38,7 +38,8 @@ namespace Potestas.SqlPlugin.Storages
             }
 
             var (dataSet, adapter, sqlConnection) = this.ConfigureDataSet();
-            using var insertCommand = new SqlCommand(this.GetInsertQuery(item), sqlConnection);
+            using var insertCommand = this.GetInsertCommand(item);
+            insertCommand.Connection = sqlConnection;
             adapter.InsertCommand = insertCommand;
             
             dataSet.Tables[0].Rows.Add();
@@ -55,7 +56,8 @@ namespace Potestas.SqlPlugin.Storages
             int count = dataSet.Tables[0].Rows.Count;
             for (int i = 0; i < count; i++)
             {
-                using var deleteCommand = new SqlCommand(this.GetDeleteQuery((int) dataSet.Tables[0].Rows[0]["Id"]), sqlConnection);
+                using var deleteCommand = this.GetDeleteCommand((int) dataSet.Tables[0].Rows[0]["Id"]);
+                deleteCommand.Connection = sqlConnection;
                 adapter.DeleteCommand = deleteCommand;
                 dataSet.Tables[0].Rows[0].Delete();
                 adapter.Update(dataSet);
@@ -79,7 +81,8 @@ namespace Potestas.SqlPlugin.Storages
             var isDeleted = false;
 
             var (dataSet, adapter, sqlConnection) = this.ConfigureDataSet();
-            using var deleteCommand = new SqlCommand(this.GetDeleteQuery(item.Id), sqlConnection);
+            using var deleteCommand = this.GetDeleteCommand(item.Id);
+            deleteCommand.Connection = sqlConnection;
             adapter.DeleteCommand = deleteCommand;
 
             dataSet.Tables[0].PrimaryKey = new[] {dataSet.Tables[0].Columns["Id"]};
@@ -102,7 +105,8 @@ namespace Potestas.SqlPlugin.Storages
             get
             {
                 using var connection = new SqlConnection(_connectionString);
-                using var sqlCommand = new SqlCommand(this.GetCountQuery(), connection);
+                using var sqlCommand = this.GetCountCommand();
+                sqlCommand.Connection = connection;
                 connection.Open();
 
                 return (int) sqlCommand.ExecuteScalar();
@@ -113,9 +117,9 @@ namespace Potestas.SqlPlugin.Storages
         public string Description => "The sql storage";
 
         protected abstract string GetSelectAllQuery();
-        protected abstract string GetInsertQuery(T value);
-        protected abstract string GetDeleteQuery(int id);
-        protected abstract string GetCountQuery();
+        protected abstract SqlCommand GetInsertCommand(T value);
+        protected abstract SqlCommand GetDeleteCommand(int id);
+        protected abstract SqlCommand GetCountCommand();
         protected abstract T DataRowToObservations(DataRow dataRow);
 
         IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();

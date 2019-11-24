@@ -5,6 +5,7 @@ using System.Data.SqlClient;
 using Microsoft.SqlServer.Types;
 using Potestas.Configuration;
 using Potestas.SqlPlugin.Mappers;
+using Potestas.SqlPlugin.Utils;
 
 namespace Potestas.SqlPlugin.Analyzers
 {
@@ -37,13 +38,13 @@ namespace Potestas.SqlPlugin.Analyzers
         public double GetMaxEnergy(Coordinates coordinates)
         {
             return this.ExecuteScalarStoredProcedure<double>("dbo.GetMaxEnergy_Coordinates",
-                command => FillParam(command, "@Coordinates", coordinates));
+                command => SqlCommandHelper.FillParam(command, "@Coordinates", coordinates));
         }
 
         public double GetMaxEnergy(DateTime dateTime)
         {
             return this.ExecuteScalarStoredProcedure<double>("dbo.GetMaxEnergy_DateTime",
-                command => FillParam(command, "@DateTime", dateTime));
+                command => SqlCommandHelper.FillParam(command, "@DateTime", dateTime));
         }
 
         public double GetMinEnergy() => this.ExecuteScalarStoredProcedure<double>("dbo.GetMinEnergy");
@@ -51,13 +52,13 @@ namespace Potestas.SqlPlugin.Analyzers
         public double GetMinEnergy(Coordinates coordinates)
         {
             return this.ExecuteScalarStoredProcedure<double>("dbo.GetMinEnergy_Coordinates",
-                command => FillParam(command, "@Coordinates", coordinates));
+                command => SqlCommandHelper.FillParam(command, "@Coordinates", coordinates));
         }
 
         public double GetMinEnergy(DateTime dateTime)
         {
             return this.ExecuteScalarStoredProcedure<double>("dbo.GetMinEnergy_DateTime",
-                command => FillParam(command, "@DateTime", dateTime));
+                command => SqlCommandHelper.FillParam(command, "@DateTime", dateTime));
         }
 
         public double GetAverageEnergy() => this.ExecuteScalarStoredProcedure<double>("dbo.GetAverageEnergy");
@@ -67,8 +68,8 @@ namespace Potestas.SqlPlugin.Analyzers
             return this.ExecuteScalarStoredProcedure<double>("dbo.GetAverageEnergy_StartFrom_EndBy",
                 command =>
                 {
-                    this.FillParam(command, "@StartFrom", startFrom);
-                    this.FillParam(command, "@EndBy", endBy);
+                    SqlCommandHelper.FillParam(command, "@StartFrom", startFrom);
+                    SqlCommandHelper.FillParam(command, "@EndBy", endBy);
                 });
         }
 
@@ -77,8 +78,8 @@ namespace Potestas.SqlPlugin.Analyzers
             return this.ExecuteScalarStoredProcedure<double>("dbo.GetAverageEnergy_RectTopLeft_RectBottomRight",
                 command =>
                 {
-                    this.FillParam(command, "@RectTopLeft", rectTopLeft);
-                    this.FillParam(command, "@RectBottomRight", rectBottomRight);
+                    SqlCommandHelper.FillParam(command, "@RectTopLeft", rectTopLeft);
+                    SqlCommandHelper.FillParam(command, "@RectBottomRight", rectBottomRight);
                 });
         }
 
@@ -155,14 +156,6 @@ namespace Potestas.SqlPlugin.Analyzers
             return executeCommand(command);
         }
 
-        private void FillParam(SqlCommand sqlCommand, string paramName, DateTime dateTime)
-        {
-            sqlCommand.Parameters.AddWithValue(paramName, dateTime);
-        }
-
-        private void FillParam(SqlCommand sqlCommand, string paramName, Coordinates coordinates)
-        {
-            sqlCommand.Parameters.Add(new SqlParameter(paramName, coordinates.ToSqlGeometry()) { UdtTypeName = "Geometry" });
-        }
+        
     }
 }

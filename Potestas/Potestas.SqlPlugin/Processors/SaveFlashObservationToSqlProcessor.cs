@@ -1,5 +1,7 @@
-﻿using Potestas.Configuration;
+﻿using System.Data.SqlClient;
+using Potestas.Configuration;
 using Potestas.Observations;
+using Potestas.SqlPlugin.Utils;
 
 namespace Potestas.SqlPlugin.Processors
 {
@@ -9,7 +11,12 @@ namespace Potestas.SqlPlugin.Processors
         {
         }
 
-        protected override string GetQueryString(FlashObservation value) =>
-            FlashObservationQueries.CreateInsertQuery(value);
+        protected override SqlCommand CreateInsertSqlCommand(FlashObservation value)
+        {
+            var sqlCommand = new SqlCommand(FlashObservationQueries.CreateInsertQuery());
+            SqlCommandHelper.FillFlashObservation(sqlCommand, value);
+            
+            return sqlCommand;
+        }
     }
 }

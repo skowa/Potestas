@@ -32,14 +32,15 @@ namespace Potestas.SqlPlugin.Processors
             }
             
             using var connection = new SqlConnection(_connectionString);
-            var sqlCommand = new SqlCommand(this.GetQueryString(value), connection);
-            
+            var sqlCommand = this.CreateInsertSqlCommand(value);
+            sqlCommand.Connection = connection;
+
             connection.Open();
             sqlCommand.ExecuteNonQuery();
         }
 
         public string Description => "Saves observations to database";
 
-        protected abstract string GetQueryString(T value);
+        protected abstract SqlCommand CreateInsertSqlCommand(T value);
     }
 }
