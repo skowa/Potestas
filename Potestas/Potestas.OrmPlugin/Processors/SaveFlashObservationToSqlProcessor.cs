@@ -10,6 +10,6 @@ namespace Potestas.OrmPlugin.Processors
         {
         }
 
-        protected override string GetQueryString(FlashObservation value) => FlashObservationQueries.CreateInsertQuery();
+        protected override string GetQueryString() => FlashObservationQueries.CreateInsertQuery();
     }
 }

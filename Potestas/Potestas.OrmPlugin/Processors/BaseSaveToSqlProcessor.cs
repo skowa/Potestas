@@ -33,11 +33,11 @@ namespace Potestas.OrmPlugin.Processors
             }
 
             using var connection = new SqlConnection(_connectionString);
-            connection.Execute(this.GetQueryString(value), value);
+            connection.Execute(this.GetQueryString(), value);
         }
 
         public string Description => "Saves observations to database using Dapper";
 
-        protected abstract string GetQueryString(T value);
+        protected abstract string GetQueryString();
     }
 }
