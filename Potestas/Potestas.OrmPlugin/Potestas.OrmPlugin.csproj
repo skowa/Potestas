@@ -10,6 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Potestas.CodeFirst\Potestas.CodeFirst.csproj" />
     <ProjectReference Include="..\Potestas.SqlHelper\Potestas.SqlHelper.csproj" />
     <ProjectReference Include="..\Potestas\Potestas.csproj" />
   </ItemGroup>
