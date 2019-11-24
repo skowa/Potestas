@@ -2,6 +2,7 @@
 using System.Data;
 using Microsoft.SqlServer.Types;
 using Potestas.Observations;
+using Potestas.SqlHelper;
 
 namespace Potestas.SqlPlugin.Mappers
 {

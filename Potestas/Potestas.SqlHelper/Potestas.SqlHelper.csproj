@@ -6,11 +6,9 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.SqlServer.Types" Version="14.0.1016.290" />
-    <PackageReference Include="System.Data.SqlClient" Version="4.8.0-preview3.19551.4" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Potestas.SqlHelper\Potestas.SqlHelper.csproj" />
     <ProjectReference Include="..\Potestas\Potestas.csproj" />
   </ItemGroup>
 

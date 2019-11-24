@@ -1,4 +1,4 @@
-﻿namespace Potestas.SqlPlugin.Utils
+﻿namespace Potestas.SqlHelper
 {
     public static class FlashObservationQueries
     {
@@ -18,5 +18,7 @@
         public static string CreateGetAllQuery() => $"SELECT * FROM {_tableName};";
 
         public static string CreateGetCountQuery() => $"SELECT COUNT(*) FROM {_tableName}";
+
+        public static string CreateDeleteAllQuery() => $"DELETE FROM {_tableName}";
     }
 }

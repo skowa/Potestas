@@ -1,6 +1,7 @@
 ﻿using System.Data.SqlClient;
 using Potestas.Configuration;
 using Potestas.Observations;
+using Potestas.SqlHelper;
 using Potestas.SqlPlugin.Utils;
 
 namespace Potestas.SqlPlugin.Processors

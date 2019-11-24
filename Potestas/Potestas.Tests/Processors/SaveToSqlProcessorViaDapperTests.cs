@@ -1,13 +1,19 @@
 ﻿using Potestas.Configuration;
 using Potestas.Observations;
-using Potestas.SqlPlugin.Processors;
+using Potestas.OrmPlugin.DapperConfiguration;
+using Potestas.OrmPlugin.Processors;
 using Xunit;
 
 namespace Potestas.Tests.Processors
 {
-    public class SaveToSqlProcessorTests : BaseSaveToSqlProcessorTests
+    public class SaveToSqlProcessorViaDapperTests : BaseSaveToSqlProcessorTests
     {
-        //[Fact]
+        public SaveToSqlProcessorViaDapperTests()
+        {
+            DapperInitializer.InitDapper();
+        }
+
+       // [Fact]
         public void OnNextTest()
         {
             this.OnNextTestInit();
