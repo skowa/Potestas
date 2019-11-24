@@ -163,16 +163,18 @@ namespace Potestas.Apps.Terminal
             var potestas = "Potestas.dll";
             var xmlPlugin = "Potestas.XmlPlugin.dll";
             var sqlPlugin = "Potestas.SqlPlugin.dll";
+            var ormPlugin = "Potestas.OrmPlugin.dll";
 
             Console.WriteLine("Choose what plugin to use");
             Console.WriteLine($"1. {potestas}");
             Console.WriteLine($"2. {xmlPlugin}");
             Console.WriteLine($"3. {sqlPlugin}");
+            Console.WriteLine($"4. {ormPlugin}");
 
             var pluginIsChosen = false;
             while(!pluginIsChosen)
             {
-                if (TryReadUserInput(0, 3, out int chosenPlugin))
+                if (TryReadUserInput(0, 4, out int chosenPlugin))
                 {
                     switch (chosenPlugin)
                     {
@@ -184,6 +186,9 @@ namespace Potestas.Apps.Terminal
                             break;
                         case 3:
                             App.LoadPlugin(Assembly.LoadFrom(sqlPlugin));
+                            break;
+                        case 4:
+                            App.LoadPlugin(Assembly.LoadFrom(ormPlugin));
                             break;
                     }
 
