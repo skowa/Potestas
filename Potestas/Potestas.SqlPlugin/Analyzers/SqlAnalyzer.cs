@@ -4,7 +4,7 @@ using System.Data;
 using System.Data.SqlClient;
 using Microsoft.SqlServer.Types;
 using Potestas.Configuration;
-using Potestas.SqlPlugin.Mappers;
+using Potestas.SqlHelper;
 using Potestas.SqlPlugin.Utils;
 
 namespace Potestas.SqlPlugin.Analyzers

@@ -1,4 +1,4 @@
-﻿namespace Potestas.SqlPlugin.Utils
+﻿namespace Potestas.SqlHelper
 {
     public static class FlashObservationQueries
     {
