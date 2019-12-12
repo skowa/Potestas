@@ -20,11 +20,8 @@ namespace Potestas.NoSqlPlugin.Extensions
 		internal static FlashObservation ToFlashObservation(this BsonDocument bsonDocument)
 		{
 			var coordinatesBsonDocument = bsonDocument["ObservationPoint"] as BsonDocument;
-			var coordinates = coordinatesBsonDocument != null
-				? new Coordinates(coordinatesBsonDocument["X"].AsDouble, coordinatesBsonDocument["Y"].AsDouble)
-				: new Coordinates();
 
-			return new FlashObservation(coordinates, bsonDocument["Intensity"].AsDouble, bsonDocument["DurationMs"].AsInt32, bsonDocument["ObservationTime"].ToUniversalTime());
+			return new FlashObservation(coordinatesBsonDocument.ToCoordinates(), bsonDocument["Intensity"].AsDouble, bsonDocument["DurationMs"].AsInt32, bsonDocument["ObservationTime"].ToUniversalTime());
 		}
 	}
 }
