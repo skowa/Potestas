@@ -15,9 +15,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Potestas.SqlPlugin", "Potes
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Potestas.OrmPlugin", "Potestas.OrmPlugin\Potestas.OrmPlugin.csproj", "{4B3EB65A-7AAD-4999-9804-1E645FDDF03B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Potestas.SqlHelper", "Potestas.SqlHelper\Potestas.SqlHelper.csproj", "{788EB524-A3BF-4EBD-8432-08307B02B4E7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Potestas.SqlHelper", "Potestas.SqlHelper\Potestas.SqlHelper.csproj", "{788EB524-A3BF-4EBD-8432-08307B02B4E7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Potestas.CodeFirst", "Potestas.CodeFirst\Potestas.CodeFirst.csproj", "{7D9341D2-5AFF-4C02-BB51-28567038D9FE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Potestas.CodeFirst", "Potestas.CodeFirst\Potestas.CodeFirst.csproj", "{7D9341D2-5AFF-4C02-BB51-28567038D9FE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Potestas.NoSqlPlugin", "Potestas.NoSqlPlugin\Potestas.NoSqlPlugin.csproj", "{8B9A580D-B22C-419A-8CE5-C98ACB91B981}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -57,6 +59,10 @@ Global
 		{7D9341D2-5AFF-4C02-BB51-28567038D9FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7D9341D2-5AFF-4C02-BB51-28567038D9FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7D9341D2-5AFF-4C02-BB51-28567038D9FE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8B9A580D-B22C-419A-8CE5-C98ACB91B981}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8B9A580D-B22C-419A-8CE5-C98ACB91B981}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8B9A580D-B22C-419A-8CE5-C98ACB91B981}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8B9A580D-B22C-419A-8CE5-C98ACB91B981}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

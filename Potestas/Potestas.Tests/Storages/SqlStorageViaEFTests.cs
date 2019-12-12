@@ -13,9 +13,8 @@ namespace Potestas.Tests.Storages
 
         public SqlStorageViaEFTests()
         {
-            DapperInitializer.InitDapper();
             var configurationMock = new Mock<IConfiguration>();
-            configurationMock.Setup(m => m.GetValue("connectionString"))
+            configurationMock.Setup(m => m.GetValue("connectionStringEF"))
                 .Returns("Server=127.0.0.1,1423;Database=PotestasEF;User Id=SA;Password=DOCKERTASK_1");
 
             _sqlStorage = new FlashObservationsSqlStorageEF(configurationMock.Object);

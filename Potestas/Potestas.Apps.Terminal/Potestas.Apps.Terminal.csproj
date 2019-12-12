@@ -14,6 +14,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Potestas.CodeFirst\Potestas.CodeFirst.csproj" />
+    <ProjectReference Include="..\Potestas.NoSqlPlugin\Potestas.NoSqlPlugin.csproj" />
     <ProjectReference Include="..\Potestas.OrmPlugin\Potestas.OrmPlugin.csproj" />
     <ProjectReference Include="..\Potestas.SqlPlugin\Potestas.SqlPlugin.csproj" />
     <ProjectReference Include="..\Potestas.XmlPlugin\Potestas.XmlPlugin.csproj" />
