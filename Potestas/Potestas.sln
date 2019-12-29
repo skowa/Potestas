@@ -19,7 +19,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Potestas.SqlHelper", "Potes
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Potestas.CodeFirst", "Potestas.CodeFirst\Potestas.CodeFirst.csproj", "{7D9341D2-5AFF-4C02-BB51-28567038D9FE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Potestas.NoSqlPlugin", "Potestas.NoSqlPlugin\Potestas.NoSqlPlugin.csproj", "{8B9A580D-B22C-419A-8CE5-C98ACB91B981}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Potestas.NoSqlPlugin", "Potestas.NoSqlPlugin\Potestas.NoSqlPlugin.csproj", "{8B9A580D-B22C-419A-8CE5-C98ACB91B981}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Potestas.Web", "Potestas.Web\Potestas.Web.csproj", "{748FCE6E-2DA4-4FAE-9D25-009E90AD5BCC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Potestas.WebPlugin", "Potestas.WebPlugin\Potestas.WebPlugin.csproj", "{BF327C39-3545-4A80-9A1E-9506F86D8B45}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -63,6 +67,14 @@ Global
 		{8B9A580D-B22C-419A-8CE5-C98ACB91B981}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8B9A580D-B22C-419A-8CE5-C98ACB91B981}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8B9A580D-B22C-419A-8CE5-C98ACB91B981}.Release|Any CPU.Build.0 = Release|Any CPU
+		{748FCE6E-2DA4-4FAE-9D25-009E90AD5BCC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{748FCE6E-2DA4-4FAE-9D25-009E90AD5BCC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{748FCE6E-2DA4-4FAE-9D25-009E90AD5BCC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{748FCE6E-2DA4-4FAE-9D25-009E90AD5BCC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BF327C39-3545-4A80-9A1E-9506F86D8B45}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BF327C39-3545-4A80-9A1E-9506F86D8B45}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BF327C39-3545-4A80-9A1E-9506F86D8B45}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BF327C39-3545-4A80-9A1E-9506F86D8B45}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

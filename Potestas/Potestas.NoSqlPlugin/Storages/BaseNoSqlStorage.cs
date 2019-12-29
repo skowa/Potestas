@@ -9,7 +9,7 @@ using Potestas.Utils;
 
 namespace Potestas.NoSqlPlugin.Storages
 {
-    public abstract class BaseNoSqlStorage<T> : BaseFileStorage<T>, IEnergyObservationStorage<T>, ICollection<T>, IEnumerable<T>, IEnumerable where T : IEnergyObservation
+    public abstract class BaseNoSqlStorage<T> : BaseStorage<T>, IEnergyObservationStorage<T>, ICollection<T>, IEnumerable<T>, IEnumerable where T : IEnergyObservation
     {
         private readonly IMongoCollection<BsonDocument> _collection;
 

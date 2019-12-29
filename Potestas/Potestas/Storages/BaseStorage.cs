@@ -5,7 +5,7 @@ using Potestas.Utils;
 
 namespace Potestas.Storages
 {
-    public abstract class BaseFileStorage<T> where T : IEnergyObservation
+    public abstract class BaseStorage<T> where T : IEnergyObservation
     {
         public bool Contains(T item, IEnumerable<T> collection)
         {

@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Potestas.OrmPlugin.Storages
 {
-    public class FlashObservationsSqlStorageEF : BaseFileStorage<FlashObservation>, IEnergyObservationStorage<FlashObservation>
+    public class FlashObservationsSqlStorageEF : BaseStorage<FlashObservation>, IEnergyObservationStorage<FlashObservation>
     {
         private readonly string _connectionString;
 
