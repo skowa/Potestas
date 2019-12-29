@@ -34,6 +34,8 @@ namespace Potestas.Web
 			{
 				c.SwaggerDoc("v1", new OpenApiInfo { Title = "Potestas API", Version = "v1" });
 			});
+
+			services.AddHealthChecks().AddCheck("PotestasDb", new SqlServerHealthCheck(Configuration["connectionString"]));
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -60,6 +62,7 @@ namespace Potestas.Web
 			app.UseEndpoints(endpoints =>
 			{
 				endpoints.MapControllers();
+				endpoints.MapHealthChecks("/health");
 			});
 		}
 	}
