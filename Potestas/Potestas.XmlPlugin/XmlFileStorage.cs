@@ -10,7 +10,7 @@ using Potestas.Utils;
 
 namespace Potestas.XmlPlugin
 {
-    public class XmlFileStorage<T> : BaseFileStorage<T>, IEnergyObservationStorage<T>, ICollection<T>, IEnumerable<T>, IEnumerable where T : IEnergyObservation
+    public class XmlFileStorage<T> : BaseStorage<T>, IEnergyObservationStorage<T>, ICollection<T>, IEnumerable<T>, IEnumerable where T : IEnergyObservation
     {
         private readonly string _filePath;
 

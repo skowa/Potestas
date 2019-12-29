@@ -10,7 +10,7 @@ namespace Potestas.Storages
 {
     /* TASK. Implement file storage
      */
-    public class FileStorage<T> : BaseFileStorage<T>, IEnergyObservationStorage<T>, ICollection<T>, IEnumerable<T>, IEnumerable where T : IEnergyObservation
+    public class FileStorage<T> : BaseStorage<T>, IEnergyObservationStorage<T>, ICollection<T>, IEnumerable<T>, IEnumerable where T : IEnergyObservation
     {
         private readonly ISerializer<T> _serializer;
         private readonly string _filePath;
