@@ -2,16 +2,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.IO;
 using System.Net;
-using System.Net.Http;
-using System.Runtime.Serialization.Formatters.Binary;
 using Potestas.Configuration;
 using Potestas.Storages;
 using Potestas.Utils;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-using Potestas.Processors;
 
 namespace Potestas.WebPlugin.Storages
 {
@@ -58,11 +53,6 @@ namespace Potestas.WebPlugin.Storages
 				throw new ArgumentNullException(nameof(item));
 			}
 
-			//var serializer = new BinarySerializer<T>();
-			//using var stream = new MemoryStream();
-			//serializer.Serialize(stream, item);
-
-			//_webClient.UploadData(this.GetResourcePath(), "POST", stream.ToArray());
 			_webClient.Headers.Add("Content-Type", "application/json");
 			_webClient.UploadString(this.GetResourcePath(), JsonConvert.SerializeObject(item));
 		}

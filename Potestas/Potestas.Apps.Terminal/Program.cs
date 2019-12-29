@@ -160,42 +160,20 @@ namespace Potestas.Apps.Terminal
 
         private static void PluginLoading()
         {
-            var potestas = "Potestas.dll";
-            var xmlPlugin = "Potestas.XmlPlugin.dll";
-            var sqlPlugin = "Potestas.SqlPlugin.dll";
-            var ormPlugin = "Potestas.OrmPlugin.dll";
-            var noSqlPlugin = "Potestas.NoSqlPlugin.dll";
-
+	        var configuration = new Configuration.Configuration();
+	        string[] plugins = configuration.GetValue("plugins").Split(';');
             Console.WriteLine("Choose what plugin to use");
-            Console.WriteLine($"1. {potestas}");
-            Console.WriteLine($"2. {xmlPlugin}");
-            Console.WriteLine($"3. {sqlPlugin}");
-            Console.WriteLine($"4. {ormPlugin}");
-            Console.WriteLine($"5. {noSqlPlugin}");
+            for (var i = 0; i < plugins.Length; i++)
+            {
+	            Console.WriteLine($"{i + 1}. {plugins[i]}");
+            }
 
             var pluginIsChosen = false;
             while(!pluginIsChosen)
             {
-                if (TryReadUserInput(0, 5, out int chosenPlugin))
+                if (TryReadUserInput(0, plugins.Length, out int chosenPlugin))
                 {
-                    switch (chosenPlugin)
-                    {
-                        case 1:
-                            App.LoadPlugin(Assembly.LoadFrom(potestas));
-                            break;
-                        case 2:
-                            App.LoadPlugin(Assembly.LoadFrom(xmlPlugin));
-                            break;
-                        case 3:
-                            App.LoadPlugin(Assembly.LoadFrom(sqlPlugin));
-                            break;
-                        case 4:
-                            App.LoadPlugin(Assembly.LoadFrom(ormPlugin));
-                            break;
-						case 5:
-							App.LoadPlugin(Assembly.LoadFrom(noSqlPlugin));
-							break;
-                    }
+                    App.LoadPlugin(Assembly.LoadFrom(plugins[chosenPlugin - 1]));
 
                     pluginIsChosen = true;
                 }

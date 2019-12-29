@@ -1,7 +1,10 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.Globalization;
+using System.Linq;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace Potestas.Web.Controllers
 {
@@ -44,9 +47,9 @@ namespace Potestas.Web.Controllers
 		[HttpGet("GetMaxEnergyByObservationPoint")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-		public IActionResult GetMaxEnergy([FromBody] Coordinates coordinates)
+		public IActionResult GetMaxEnergy([FromQuery] double x, [FromQuery] double y)
 		{
-			return this.Ok(_analyzer.GetMaxEnergy(coordinates));
+			return this.Ok(_analyzer.GetMaxEnergy(new Coordinates(x, y)));
 		}
 
 		[HttpGet("GetMinEnergyByObservationTime")]
@@ -60,9 +63,9 @@ namespace Potestas.Web.Controllers
 		[HttpGet("GetMinEnergyByObservationPoint")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-		public IActionResult GetMinEnergy([FromBody] Coordinates coordinates)
+		public IActionResult GetMinEnergy([FromQuery] double x, [FromQuery] double y)
 		{
-			return this.Ok(_analyzer.GetMaxEnergy(coordinates));
+			return this.Ok(_analyzer.GetMinEnergy(new Coordinates(x, y)));
 		}
 
 		[HttpGet("GetAverageEnergy")]
@@ -84,9 +87,9 @@ namespace Potestas.Web.Controllers
 		[HttpGet("GetAverageEnergyBetweenObservationPoint")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-		public IActionResult GetAverageEnergy([MaxLength(2), FromBody] Coordinates[] coordinates)
+		public IActionResult GetAverageEnergy([FromQuery] double x1, [FromQuery] double y1, [FromQuery] double x2, [FromQuery] double y2)
 		{
-			return this.Ok(_analyzer.GetAverageEnergy(coordinates[0], coordinates[1]));
+			return this.Ok(_analyzer.GetAverageEnergy(new Coordinates(x1, y1), new Coordinates(x2, y2)));
 		}
 
 		[HttpGet("GetMaxEnergyTime")]
@@ -126,7 +129,8 @@ namespace Potestas.Web.Controllers
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
 		public IActionResult GetDistributionByEnergyValue()
 		{
-			return this.Ok(_analyzer.GetDistributionByEnergyValue());
+			return this.Ok(_analyzer.GetDistributionByEnergyValue()
+				.ToDictionary(pair => pair.Key.ToString(CultureInfo.InvariantCulture), pair => pair.Value));
 		}
 
 		[HttpGet("GetDistributionByCoordinates")]
@@ -134,7 +138,8 @@ namespace Potestas.Web.Controllers
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
 		public IActionResult GetDistributionByCoordinates()
 		{
-			return this.Ok(_analyzer.GetDistributionByCoordinates());
+			return this.Ok(_analyzer.GetDistributionByCoordinates()
+				.ToDictionary(pair => JsonConvert.SerializeObject(pair.Key), pair => pair.Value));
 		}
 
 		[HttpGet("GetDistributionByObservationTime")]
@@ -142,7 +147,8 @@ namespace Potestas.Web.Controllers
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
 		public IActionResult GetDistributionByObservationTime()
 		{
-			return this.Ok(_analyzer.GetDistributionByObservationTime());
+			return this.Ok(_analyzer.GetDistributionByObservationTime()
+				.ToDictionary(pair => JsonConvert.ToString(pair.Key), pair => pair.Value));
 		}
 	}
 }
