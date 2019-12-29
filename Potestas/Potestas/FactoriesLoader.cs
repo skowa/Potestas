@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using Potestas.Configuration;
 using Potestas.Exceptions;
+using Potestas.Logging;
 
 namespace Potestas
 {
@@ -84,9 +85,10 @@ namespace Potestas
             var resolvedConstructorTypes = new List<object>();
             if (isConfigurationParamOnly)
             {
-                if (assemblyTypes.Any(t => t.IsClass && t.IsAssignableFrom(typeof(IConfiguration))))
+                if (assemblyTypes.Any(t => t.IsClass && t.GetInterfaces().Any(i => i == typeof(IConfiguration))))
                 {
-                    resolvedConstructorTypes.Add(Activator.CreateInstance(assemblyTypes.First(t => t.IsClass && t.IsAssignableFrom(typeof(IConfiguration)))));
+	                resolvedConstructorTypes.Add(Activator.CreateInstance(assemblyTypes.First(t =>
+		                t.IsClass && t.GetInterfaces().Any(i => i == typeof(IConfiguration)))));
                 }
                 else
                 {
@@ -95,12 +97,12 @@ namespace Potestas
             }
             else
             {
-                foreach (var param in typeConstructorParams)
-                {
-                    resolvedConstructorTypes.Add(Activator.CreateInstance(
-                        assemblyTypes.FirstOrDefault(t => t.IsClass && (param.ParameterType == t || t.IsAssignableFrom(param.ParameterType))) ??
-                        throw new NotRecognizedFactoryConstructorParameterException(typeToBeCreated, param.ParameterType)));
-                }
+	            resolvedConstructorTypes.AddRange(typeConstructorParams.Select(param =>
+		            Activator.CreateInstance(
+			            assemblyTypes.FirstOrDefault(t =>
+				            t.IsClass && (param.ParameterType == t ||
+				                          t.GetInterfaces().Any(i => param.ParameterType == i))) ??
+			            throw new NotRecognizedFactoryConstructorParameterException(typeToBeCreated, param.ParameterType))));
             }
 
             return resolvedConstructorTypes.ToArray();

@@ -1,6 +1,8 @@
 ﻿using System;
 using Potestas.Analizers;
 using Potestas.Configuration;
+using Potestas.Logging;
+using Potestas.Logging.Decorators;
 using Potestas.Processors;
 using Potestas.Storages;
 
@@ -10,19 +12,23 @@ namespace Potestas.Factories
     {
         private readonly IConfiguration _configuration;
 
-        protected FileBaseProcessingFactory(IConfiguration configuration)
+        protected FileBaseProcessingFactory(ILogger logger, IConfiguration configuration)
         {
-            _configuration = configuration;
+            _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+            Logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
+        protected ILogger Logger { get; set; }
+        
         public abstract IEnergyObservationProcessor<T> CreateProcessor();
 
         public IEnergyObservationStorage<T> CreateStorage()
         {
-            return new FileStorage<T>(GetSerializer(), GetFilePath());
+            return new LogEnergyObservationStorageDecorator<T>(new FileStorage<T>(GetSerializer(), GetFilePath()), Logger);
         }
 
-        public IEnergyObservationAnalizer CreateAnalizer() => new LINQAnalizer<T>(this.CreateStorage());
+        public IEnergyObservationAnalizer CreateAnalizer() =>
+	        new LogEnergyObservationAnalyzerDecorator(new LINQAnalizer<T>(this.CreateStorage()), Logger);
 
         protected string GetFilePath()
         {

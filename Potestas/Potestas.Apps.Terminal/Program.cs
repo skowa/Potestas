@@ -8,6 +8,7 @@ using Potestas.ApplicationFrame;
 using Potestas.ApplicationFrame.ProcessingGroups;
 using Potestas.ApplicationFrame.SourceRegistrations;
 using Potestas.Factories;
+using Potestas.Logging;
 using Potestas.Observations;
 using Potestas.Sources;
 using Potestas.Storages;
@@ -52,7 +53,7 @@ namespace Potestas.Apps.Terminal
             ISourceFactory<FlashObservation> sourceFactory = null;
             if (App.SourceFactories.Count == 0)
             {
-                sourceFactory = new RandomEnergySourceFactory();
+                sourceFactory = new RandomEnergySourceFactory(new Logger());
                 Console.WriteLine($"The source factory is not defined in plugin, so it will be {nameof(RandomEnergySource)}");
             }
             else
