@@ -7,6 +7,7 @@ using Potestas.Configuration;
 using Potestas.Storages;
 using Potestas.Utils;
 using Newtonsoft.Json;
+using Potestas.WebPlugin.Services;
 
 namespace Potestas.WebPlugin.Storages
 {
@@ -25,7 +26,8 @@ namespace Potestas.WebPlugin.Storages
 		{
 			get
 			{
-				string response = _webClient.DownloadString($"{this.GetResourcePath()}/GetObservationsCount");
+				string response = WebHelper.DecorateWithRetry(() =>
+					_webClient.DownloadString($"{this.GetResourcePath()}/GetObservationsCount"));
 				if (int.TryParse(response, out var count))
 				{
 					return count;
@@ -40,7 +42,7 @@ namespace Potestas.WebPlugin.Storages
 
 		public IEnumerator<T> GetEnumerator()
 		{
-			string response = _webClient.DownloadString(this.GetResourcePath());
+			string response = WebHelper.DecorateWithRetry(() => _webClient.DownloadString(this.GetResourcePath()));
 			var observations = this.GetFromJson(response);
 
 			return observations.GetEnumerator();
@@ -54,12 +56,13 @@ namespace Potestas.WebPlugin.Storages
 			}
 
 			_webClient.Headers.Add("Content-Type", "application/json");
-			_webClient.UploadString(this.GetResourcePath(), JsonConvert.SerializeObject(item));
+			WebHelper.DecorateWithRetry(() => _webClient.UploadString(this.GetResourcePath(), JsonConvert.SerializeObject(item)));
 		}
 
 		public void Clear()
 		{
-			_webClient.UploadValues($"{this.GetResourcePath()}/DeleteAll", "DELETE", new NameValueCollection());
+			WebHelper.DecorateWithRetry(() =>
+				_webClient.UploadValues($"{this.GetResourcePath()}/DeleteAll", "DELETE", new NameValueCollection()));
 		}
 
 		public bool Contains(T item) => base.Contains(item, this);
@@ -85,17 +88,17 @@ namespace Potestas.WebPlugin.Storages
 			
 		}
 
+		public void Dispose()
+		{
+			_webClient?.Dispose();
+		}
+
 		protected abstract string GetResourcePath();
 		protected abstract IEnumerable<T> GetFromJson(string json);
 
 		IEnumerator IEnumerable.GetEnumerator()
 		{
 			return GetEnumerator();
-		}
-
-		public void Dispose()
-		{
-			_webClient?.Dispose();
 		}
 	}
 }

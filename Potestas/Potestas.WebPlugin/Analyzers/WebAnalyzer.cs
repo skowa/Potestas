@@ -84,7 +84,7 @@ namespace Potestas.WebPlugin.Analyzers
 
 		public IDictionary<double, int> GetDistributionByEnergyValue()
 		{
-			string response = _webClient.DownloadString($"{_resourcePath}/GetDistributionByEnergyValue");
+			string response = WebHelper.DecorateWithRetry(() => _webClient.DownloadString($"{_resourcePath}/GetDistributionByEnergyValue"));
 
 			try
 			{
@@ -99,7 +99,7 @@ namespace Potestas.WebPlugin.Analyzers
 
 		public IDictionary<Coordinates, int> GetDistributionByCoordinates()
 		{
-			string response = _webClient.DownloadString($"{_resourcePath}/GetDistributionByCoordinates");
+			string response = WebHelper.DecorateWithRetry(() => _webClient.DownloadString($"{_resourcePath}/GetDistributionByCoordinates"));
 
 			try
 			{
@@ -114,7 +114,7 @@ namespace Potestas.WebPlugin.Analyzers
 
 		public IDictionary<DateTime, int> GetDistributionByObservationTime()
 		{
-			string response = _webClient.DownloadString($"{_resourcePath}/GetDistributionByObservationTime");
+			string response = WebHelper.DecorateWithRetry(() => _webClient.DownloadString($"{_resourcePath}/GetDistributionByObservationTime"));
 
 			return JsonConvert.DeserializeObject<Dictionary<string, int>>(response)
 				.ToDictionary(pair => pair.Key.ToDateTime(), pair => pair.Value);
@@ -127,7 +127,7 @@ namespace Potestas.WebPlugin.Analyzers
 
 		private double MakeWebClientDoubleCallCore(string apiMethod, bool isQueryStringFilled = false)
 		{
-			string response = _webClient.DownloadString($"{_resourcePath}/{apiMethod}");
+			string response = WebHelper.DecorateWithRetry(() => _webClient.DownloadString($"{_resourcePath}/{apiMethod}"));
 			if (isQueryStringFilled)
 			{
 				_webClient.QueryString.Clear();
@@ -144,14 +144,14 @@ namespace Potestas.WebPlugin.Analyzers
 
 		private DateTime MakeWebClientDateTimeCallCore(string apiMethod)
 		{
-			string response = _webClient.DownloadString($"{_resourcePath}/{apiMethod}");
+			string response = WebHelper.DecorateWithRetry(() => _webClient.DownloadString($"{_resourcePath}/{apiMethod}"));
 
 			return response.ToDateTime();
 		}
 
 		private Coordinates MakeWebClientCoordinatesCallCore(string apiMethod)
 		{
-			string response = _webClient.DownloadString($"{_resourcePath}/{apiMethod}");
+			string response = WebHelper.DecorateWithRetry(() => _webClient.DownloadString($"{_resourcePath}/{apiMethod}"));
 
 			var observationPoint = JsonConvert.DeserializeObject<CoordinatesDTO>(response).ToCoordinates();
 
